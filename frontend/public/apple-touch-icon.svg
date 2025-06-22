@@ -1,0 +1,15 @@
+<svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="appleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#121c2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" fill="url(#appleGradient)" rx="36"/>
+  <text x="90" y="70" font-family="Arial, sans-serif" font-size="48" font-weight="bold" 
+        text-anchor="middle" fill="#b38144">IT</text>
+  <text x="90" y="110" font-family="Arial, sans-serif" font-size="16" font-weight="600" 
+        text-anchor="middle" fill="#e2e8f0">InterTravel</text>
+  <text x="90" y="130" font-family="Arial, sans-serif" font-size="12" 
+        text-anchor="middle" fill="#94a3b8">Premium Travel</text>
+</svg>

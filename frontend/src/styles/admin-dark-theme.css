@@ -1,0 +1,318 @@
+/**
+ * 🎨 TEMA OSCURO ADMIN CORREGIDO - ALTO CONTRASTE
+ * ================================================
+ * 
+ * ✅ Forzar tema oscuro en TODAS las páginas admin
+ * ✅ Alto contraste: Fondo oscuro + Texto blanco
+ * ✅ Compatible con todas las secciones
+ */
+
+/* Variables CSS para el tema oscuro mejorado */
+:root {
+  --admin-bg-primary: #0f172a;      /* Fondo principal muy oscuro */
+  --admin-bg-secondary: #1e293b;     /* Fondo secundario */
+  --admin-bg-tertiary: #334155;      /* Fondo terciario */
+  --admin-bg-card: #1e293b;          /* Fondo de cards */
+  --admin-bg-sidebar: #111827;       /* Sidebar aún más oscuro */
+  
+  --admin-text-primary: #ffffff;     /* Texto principal BLANCO */
+  --admin-text-secondary: #e2e8f0;   /* Texto secundario */
+  --admin-text-muted: #cbd5e1;       /* Texto atenuado */
+  --admin-text-disabled: #94a3b8;    /* Texto deshabilitado */
+  
+  --admin-border-primary: #374151;   
+  --admin-border-secondary: #4b5563; 
+  --admin-border-focus: #3b82f6;     
+  
+  --admin-accent-blue: #3b82f6;      
+  --admin-accent-blue-hover: #2563eb;
+  --admin-success: #10b981;          
+  --admin-warning: #f59e0b;          
+  --admin-error: #ef4444;            
+  --admin-info: #8b5cf6;             
+  
+  --admin-hover-bg: #374151;         
+  --admin-focus-bg: #4b5563;         
+  --admin-selected-bg: #1f2937;      
+}
+
+/* FORZAR TEMA OSCURO GLOBALMENTE EN ADMIN */
+body:has([class*="admin"]),
+body:has([data-admin]),
+.admin-layout,
+.admin-layout *,
+[data-admin="true"],
+[data-admin="true"] *,
+div[class*="admin"] *,
+div[id*="admin"] * {
+  background-color: var(--admin-bg-primary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Específico para páginas admin */
+.min-h-screen.bg-gray-50,
+.bg-gray-50,
+.bg-white {
+  background-color: var(--admin-bg-primary) !important;
+}
+
+/* Cards y contenedores */
+.bg-white,
+[class*="card"],
+.card,
+.rounded-lg.shadow,
+.border.rounded-lg {
+  background-color: var(--admin-bg-card) !important;
+  border-color: var(--admin-border-primary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Headers y títulos */
+h1, h2, h3, h4, h5, h6,
+.text-gray-900,
+.text-gray-800,
+.text-gray-700 {
+  color: var(--admin-text-primary) !important;
+}
+
+/* Textos secundarios */
+.text-gray-600,
+.text-gray-500 {
+  color: var(--admin-text-secondary) !important;
+}
+
+/* Inputs y formularios */
+input, textarea, select,
+.border.border-gray-300,
+.border-gray-300 {
+  background-color: var(--admin-bg-tertiary) !important;
+  border-color: var(--admin-border-primary) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--admin-border-focus) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Botones */
+.bg-blue-600 {
+  background-color: var(--admin-accent-blue) !important;
+}
+
+.bg-blue-600:hover {
+  background-color: var(--admin-accent-blue-hover) !important;
+}
+
+/* Tables */
+table,
+thead,
+tbody,
+tr,
+td,
+th {
+  background-color: var(--admin-bg-card) !important;
+  color: var(--admin-text-primary) !important;
+  border-color: var(--admin-border-primary) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--admin-bg-secondary) !important;
+}
+
+/* Hover states */
+.hover\\:bg-gray-50:hover,
+.hover\\:bg-gray-100:hover {
+  background-color: var(--admin-hover-bg) !important;
+}
+
+/* Badges y estados */
+.bg-green-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #10b981 !important;
+}
+
+.bg-red-100 {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  color: #ef4444 !important;
+}
+
+.bg-yellow-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #f59e0b !important;
+}
+
+.bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  color: #3b82f6 !important;
+}
+
+.bg-orange-100 {
+  background-color: rgba(251, 146, 60, 0.2) !important;
+  color: #f97316 !important;
+}
+
+.bg-purple-100 {
+  background-color: rgba(139, 92, 246, 0.2) !important;
+  color: #8b5cf6 !important;
+}
+
+.bg-indigo-100 {
+  background-color: rgba(99, 102, 241, 0.2) !important;
+  color: #6366f1 !important;
+}
+
+/* Sidebar específico */
+.lg\\:bg-white {
+  background-color: var(--admin-bg-sidebar) !important;
+}
+
+/* Charts y gráficos - mantener legibilidad */
+.recharts-wrapper,
+.recharts-surface {
+  background-color: transparent !important;
+}
+
+/* Placeholders */
+::placeholder {
+  color: var(--admin-text-muted) !important;
+}
+
+/* Loading screens */
+.animate-pulse .bg-gray-200 {
+  background-color: var(--admin-bg-tertiary) !important;
+}
+
+/* Específico para textos que deben mantenerse blancos */
+.text-white {
+  color: #ffffff !important;
+}
+
+/* Fix para navegación */
+.border-gray-200 {
+  border-color: var(--admin-border-primary) !important;
+}
+
+/* Asegurar que los iconos mantengan su color */
+svg {
+  fill: currentColor !important;
+}
+
+/* Mobile menu */
+.lg\\:hidden .bg-white {
+  background-color: var(--admin-bg-sidebar) !important;
+}
+
+/* Asegurar contraste en todos los elementos */
+* {
+  box-shadow: none !important;
+}
+
+/* Scrollbars oscuros */
+::-webkit-scrollbar {
+  width: 8px;
+  background-color: var(--admin-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--admin-border-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--admin-border-secondary);
+}
+
+/* Asegurar que los componentes de Recharts sean visibles */
+.recharts-cartesian-axis-line,
+.recharts-cartesian-axis-tick-line {
+  stroke: var(--admin-text-muted) !important;
+}
+
+.recharts-text {
+  fill: var(--admin-text-secondary) !important;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: var(--admin-border-primary) !important;
+}
+
+/* Fix para tooltips */
+.recharts-tooltip-wrapper {
+  background-color: var(--admin-bg-card) !important;
+  border: 1px solid var(--admin-border-primary) !important;
+  border-radius: 8px !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Tabs específicos */
+[role="tablist"] {
+  background-color: var(--admin-bg-secondary) !important;
+}
+
+[role="tab"] {
+  color: var(--admin-text-secondary) !important;
+}
+
+[role="tab"][data-state="active"] {
+  background-color: var(--admin-bg-card) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+/* Modals y overlays */
+.fixed.inset-0 {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Gradientes para las cards de paquetes */
+.bg-gradient-to-r {
+  background: linear-gradient(to right, var(--admin-accent-blue), var(--admin-info)) !important;
+}
+
+/* Fix para text-gray-400 específicos */
+.text-gray-400 {
+  color: var(--admin-text-disabled) !important;
+}
+
+/* Fix para badges específicos que necesitan mantener su color */
+.text-green-600,
+.text-green-800 {
+  color: var(--admin-success) !important;
+}
+
+.text-red-600,
+.text-red-800 {
+  color: var(--admin-error) !important;
+}
+
+.text-yellow-600,
+.text-yellow-800 {
+  color: var(--admin-warning) !important;
+}
+
+.text-blue-600,
+.text-blue-800 {
+  color: var(--admin-accent-blue) !important;
+}
+
+.text-purple-600,
+.text-purple-800 {
+  color: var(--admin-info) !important;
+}
+
+/* Fix para elementos específicos del admin */
+.divide-y > * + * {
+  border-color: var(--admin-border-primary) !important;
+}
+
+/* Asegurar que el texto de los badges sea legible */
+.bg-green-100.text-green-800,
+.bg-red-100.text-red-800,
+.bg-yellow-100.text-yellow-800,
+.bg-blue-100.text-blue-800,
+.bg-purple-100.text-purple-800,
+.bg-orange-100.text-orange-800,
+.bg-indigo-100.text-indigo-800 {
+  font-weight: 600 !important;
+}

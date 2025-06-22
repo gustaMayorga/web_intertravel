@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  /* Font family will be set by Next/Font in layout.tsx */
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* White */
+    --foreground: 216 41% 12%; /* Dark Blue #121c2e for text */
+
+    --card: 0 0% 97% / 0.85; /* Off-white for cards with 85% opacity */
+    --card-foreground: 216 41% 12%; /* Dark Blue for text on cards */
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 216 41% 12%;
+
+    --primary: 216 41% 12%; /* Dark Blue #121c2e */
+    --primary-foreground: 0 0% 98%; /* Almost white for text on primary */
+
+    --secondary: 210 25% 92%; /* Light gray, slightly darker than previous background */
+    --secondary-foreground: 216 41% 15%; /* Darker blue for text on secondary */
+
+    --muted: 210 25% 90%; /* A general light gray for muted elements */
+    --muted-foreground: 210 10% 45%; /* Lighter gray for muted text */
+
+    --accent: 37 47% 48%; /* Gold #b38144 */
+    --accent-foreground: 216 41% 12%; /* Dark Blue for text on accent */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 20% 88%; 
+    --input: 210 20% 92%; 
+    --ring: 37 47% 48%; /* Gold #b38144 for focus rings */
+
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    /* Sidebar variables updated for consistency */
+    --sidebar-background: 216 41% 10%; /* Darker blue for sidebar */
+    --sidebar-foreground: 0 0% 95%; /* Light text for sidebar */
+    --sidebar-primary: 37 47% 55%; /* Goldish accent for sidebar primary elements */
+    --sidebar-primary-foreground: 216 41% 10%; /* Dark blue text on sidebar primary */
+    --sidebar-accent: 37 47% 48%; /* Gold */
+    --sidebar-accent-foreground: 0 0% 98%; /* White text on sidebar accent */
+    --sidebar-border: 216 41% 20%; /* Slightly lighter dark blue for border */
+    --sidebar-ring: 37 47% 55%;
+  }
+
+  .dark {
+    --background: 216 30% 8%; /* Very dark blue */
+    --foreground: 0 0% 95%; /* Light gray text */
+
+    --card: 216 30% 12% / 0.85; /* Darker than background, dark blueish with 85% opacity */
+    --card-foreground: 0 0% 95%;
+
+    --popover: 216 30% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 216 41% 25%; /* Slightly lighter/more vibrant dark blue */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 10% 20%; /* Dark gray */
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 210 10% 20%;
+    --muted-foreground: 210 10% 60%;
+
+    --accent: 37 47% 58%; /* Lighter Gold */
+    --accent-foreground: 216 41% 12%; /* Dark blue text on accent */
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 10% 25%;
+    --input: 210 10% 22%;
+    --ring: 37 47% 58%; /* Lighter Gold for focus rings */
+
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Dark Sidebar variables */
+    --sidebar-background: 216 35% 6%; /* Even darker blue for sidebar */
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 37 47% 58%; /* Lighter Gold */
+    --sidebar-primary-foreground: 216 35% 6%; /* Darkest blue text on sidebar primary */
+    --sidebar-accent: 37 47% 52%; /* Gold */
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 216 30% 15%;
+    --sidebar-ring: 37 47% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-montserrat), sans-serif;
+    background-image: url('/DSC_0054.JPG'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  /* Add a semi-transparent overlay to ensure text is readable over the background */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: hsla(var(--background), 0.6); /* Adjusted opacity to 0.6 */
+    z-index: -1;
+  }
+}
