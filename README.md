@@ -203,7 +203,7 @@ Este proyecto está bajo la Licencia ISC. Ver `LICENSE` para más detalles.
 
 ## 📞 Soporte
 
-Para soporte técnico, contactar a: [correo@intertravel.com]
+Para soporte técnico, contactar a: [info@intertravel.com]
 
 ---
 
