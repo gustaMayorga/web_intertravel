@@ -33,47 +33,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const initializeAuth = async () => {
     try {
-      console.log('🔐 AuthContext: Inicializando autenticacion...');
+      console.log(' AuthContext: Inicializando autenticacion...');
       setLoading(true);
       
       const user = await authService.initialize();
       
       if (user) {
         setCurrentUser(user);
-        console.log('✅ AuthContext: Usuario autenticado:', user.email);
+        console.log(' AuthContext: Usuario autenticado:', user.email);
       } else {
         setCurrentUser(null);
-        console.log('❌ AuthContext: No hay usuario autenticado');
+        console.log(' AuthContext: No hay usuario autenticado');
       }
     } catch (error) {
-      console.error('❌ AuthContext: Error en inicializacion:', error);
+      console.error(' AuthContext: Error en inicializacion:', error);
       setCurrentUser(null);
     } finally {
       setLoading(false);
-      console.log('🏁 AuthContext: Inicialización completada');
+      console.log(' AuthContext: Inicialización completada');
     }
   };
 
   const login = async (email: string, password: string): Promise<AuthResult> => {
     try {
-      console.log('🔑 AuthContext: Iniciando login para', email);
+      console.log(' AuthContext: Iniciando login para', email);
       setLoading(true);
       
       const result = await authService.login({ email, password });
       
       if (result.success && result.user) {
         setCurrentUser(result.user);
-        console.log('✅ AuthContext: Login exitoso');
+        console.log(' AuthContext: Login exitoso');
         
         // Redirigir al dashboard SIN usar router.push para evitar bucles
         window.location.href = '/dashboard';
       } else {
-        console.error('❌ AuthContext: Error en login:', result.error);
+        console.error(' AuthContext: Error en login:', result.error);
       }
       
       return result;
     } catch (error) {
-      console.error('❌ AuthContext: Error en login:', error);
+      console.error(' AuthContext: Error en login:', error);
       return {
         success: false,
         error: 'Error de conexion'
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string
   ): Promise<AuthResult> => {
     try {
-      console.log('📝 AuthContext: Iniciando registro para', email);
+      console.log(' AuthContext: Iniciando registro para', email);
       setLoading(true);
       
       const result = await authService.register({
@@ -104,17 +104,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (result.success && result.user) {
         setCurrentUser(result.user);
-        console.log('✅ AuthContext: Registro exitoso');
+        console.log(' AuthContext: Registro exitoso');
         
         // Redirigir al dashboard SIN usar router.push para evitar bucles
         window.location.href = '/dashboard';
       } else {
-        console.error('❌ AuthContext: Error en registro:', result.error);
+        console.error(' AuthContext: Error en registro:', result.error);
       }
       
       return result;
     } catch (error) {
-      console.error('❌ AuthContext: Error en registro:', error);
+      console.error(' AuthContext: Error en registro:', error);
       return {
         success: false,
         error: 'Error de conexion'
@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    console.log('🚪 AuthContext: Cerrando sesion...');
+    console.log(' AuthContext: Cerrando sesion...');
     
     authService.logout();
     setCurrentUser(null);
@@ -133,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Usar window.location para forzar recarga y evitar problemas de estado
     window.location.href = '/login';
     
-    console.log('✅ AuthContext: Sesion cerrada');
+    console.log(' AuthContext: Sesion cerrada');
   };
 
   // Alias para compatibilidad con componentes existentes
@@ -141,22 +141,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const refreshUser = async (): Promise<boolean> => {
     try {
-      console.log('🔄 AuthContext: Refrescando datos de usuario...');
+      console.log(' AuthContext: Refrescando datos de usuario...');
       
       const success = await authService.refreshUserData();
       
       if (success) {
         const userData = authService.getCurrentUser();
         setCurrentUser(userData);
-        console.log('✅ AuthContext: Datos actualizados');
+        console.log(' AuthContext: Datos actualizados');
         return true;
       } else {
-        console.log('❌ AuthContext: Error refrescando, cerrando sesion');
+        console.log(' AuthContext: Error refrescando, cerrando sesion');
         logout();
         return false;
       }
     } catch (error) {
-      console.error('❌ AuthContext: Error en refresh:', error);
+      console.error(' AuthContext: Error en refresh:', error);
       logout();
       return false;
     }
@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isAuthenticated: !!currentUser && !loading
   };
 
-  console.log('🔍 AuthContext State:', { 
+  console.log(' AuthContext State:', { 
     isAuthenticated: !!currentUser && !loading, 
     loading, 
     hasUser: !!currentUser 

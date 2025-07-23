@@ -5,8 +5,8 @@ const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
-  // ❌ REMOVIDO: skipWaiting: true, - Esta propiedad no existe en esta versión del plugin
-  // ✅ Configuración PWA válida:
+  //  REMOVIDO: skipWaiting: true, - Esta propiedad no existe en esta versión del plugin
+  //  Configuración PWA válida:
   workboxOptions: {
     disableDevLogs: true,
   },
@@ -17,11 +17,11 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
-    // ❌ TEMPORAL: Removeremos esto después de corregir los errores
-    ignoreBuildErrors: false, // ✅ Cambiado para detectar errores
+    //  TEMPORAL: Removeremos esto después de corregir los errores
+    ignoreBuildErrors: false, //  Cambiado para detectar errores
   },
   eslint: {
-    ignoreDuringBuilds: false, // ✅ Cambiado para detectar errores
+    ignoreDuringBuilds: false, //  Cambiado para detectar errores
   },
   images: {
     remotePatterns: [

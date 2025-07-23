@@ -17,30 +17,30 @@ export default function DashboardPage() {
       setLoading(true);
       setError(null);
       
-      console.log('🔍 isAuthenticated:', isAuthenticated);
-      console.log('🔍 currentUser:', currentUser);
-      console.log('🔍 bookingsService:', bookingsService);
-      console.log('🔍 bookingsService.getUserBookings:', typeof bookingsService?.getUserBookings);
+      console.log(' isAuthenticated:', isAuthenticated);
+      console.log(' currentUser:', currentUser);
+      console.log(' bookingsService:', bookingsService);
+      console.log(' bookingsService.getUserBookings:', typeof bookingsService?.getUserBookings);
       
       if (!isAuthenticated) {
         setError('Usuario no autenticado');
         return;
       }
 
-      console.log('📊 Cargando reservas con bookingsService...');
+      console.log(' Cargando reservas con bookingsService...');
       const result: BookingsResult = await bookingsService.getUserBookings();
       
-      console.log('🔍 Result:', result);
+      console.log(' Result:', result);
       
       if (result.success) {
         setBookings(result.bookings || []);
-        console.log('✅ Reservas cargadas:', result.bookings?.length || 0);
+        console.log(' Reservas cargadas:', result.bookings?.length || 0);
       } else {
         setError(result.error || 'Error cargando reservas');
-        console.error('❌ Error:', result.error);
+        console.error(' Error:', result.error);
       }
     } catch (error) {
-      console.error('❌ Error de conexión:', error);
+      console.error(' Error de conexión:', error);
       setError('Error de conexión: ' + error.message);
     } finally {
       setLoading(false);

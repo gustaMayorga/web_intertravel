@@ -88,7 +88,7 @@ export default function RegisterDNIPage() {
     try {
       setIsLoading(true);
       
-      console.log('🔍 Verificando DNI:', dni);
+      console.log(' Verificando DNI:', dni);
       
       const response = await fetch('http://localhost:3002/api/app/auth/check-dni', {
         method: 'POST',
@@ -103,7 +103,7 @@ export default function RegisterDNIPage() {
       }
       
       const result: DNICheckResult = await response.json();
-      console.log('✅ Resultado DNI:', result);
+      console.log(' Resultado DNI:', result);
       
       setDniResult(result);
       
@@ -129,7 +129,7 @@ export default function RegisterDNIPage() {
       }
       
     } catch (error) {
-      console.error('❌ Error verificando DNI:', error);
+      console.error(' Error verificando DNI:', error);
       toast({
         title: "Error de conexión",
         description: "No se pudo verificar el DNI. Verifica tu conexión e intenta nuevamente.",
@@ -182,7 +182,7 @@ export default function RegisterDNIPage() {
     try {
       setIsLoading(true);
       
-      console.log('📝 Registrando usuario con DNI:', dni);
+      console.log(' Registrando usuario con DNI:', dni);
       
       const response = await fetch('http://localhost:3002/api/app/auth/register', {
         method: 'POST',
@@ -205,7 +205,7 @@ export default function RegisterDNIPage() {
       }
       
       const result = await response.json();
-      console.log('✅ Registro exitoso:', result);
+      console.log(' Registro exitoso:', result);
       
       toast({
         title: "¡Registro exitoso!",
@@ -220,7 +220,7 @@ export default function RegisterDNIPage() {
       }, 2000);
       
     } catch (error) {
-      console.error('❌ Error en registro:', error);
+      console.error(' Error en registro:', error);
       toast({
         title: "Error en el registro",
         description: error instanceof Error ? error.message : "Error al crear la cuenta",
@@ -369,7 +369,7 @@ export default function RegisterDNIPage() {
                 <CardDescription>
                   DNI: <strong>{dni}</strong> verificado. 
                   {dniResult?.should_link && (
-                    <span className="text-green-600"> • {dniResult.bookings_count} reserva(s) serán vinculadas</span>
+                    <span className="text-green-600"> * {dniResult.bookings_count} reserva(s) serán vinculadas</span>
                   )}
                 </CardDescription>
               </CardHeader>

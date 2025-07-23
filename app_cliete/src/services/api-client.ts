@@ -17,7 +17,7 @@ export interface User {
   phone?: string;
   role: string;
   joinDate?: string;
-  // ✅ Propiedades adicionales para compatibilidad
+  //  Propiedades adicionales para compatibilidad
   photoURL?: string;
   displayName?: string;
 }
@@ -72,7 +72,7 @@ class APIClient {
       if (this.token && !localStorage.getItem('intertravel_token')) {
         localStorage.setItem('intertravel_token', this.token);
         localStorage.removeItem('auth_token');
-        console.log('🔄 Token migrado de auth_token a intertravel_token');
+        console.log(' Token migrado de auth_token a intertravel_token');
       }
     }
   }
@@ -85,7 +85,7 @@ class APIClient {
         // Guardar en ambas ubicaciones para compatibilidad
         localStorage.setItem('intertravel_token', token);
         localStorage.setItem('auth_token', token);
-        console.log('✅ Token guardado en localStorage (ambas claves)');
+        console.log(' Token guardado en localStorage (ambas claves)');
       } else {
         localStorage.removeItem('intertravel_token');
         localStorage.removeItem('auth_token');
@@ -116,7 +116,7 @@ class APIClient {
     try {
       const url = `${this.baseURL}/api/app${endpoint}`;
       
-      console.log(`🌐 API Request: ${options.method || 'GET'} ${url}`);
+      console.log(` API Request: ${options.method || 'GET'} ${url}`);
       
       const response = await fetch(url, {
         ...options,
@@ -131,21 +131,21 @@ class APIClient {
       const data = await response.json();
 
       if (!response.ok) {
-        console.error(`❌ API Error: ${response.status}`, data);
+        console.error(` API Error: ${response.status}`, data);
         return {
           success: false,
           error: data.error || `HTTP ${response.status}`,
         };
       }
 
-      console.log(`✅ API Success: ${endpoint}`);
+      console.log(` API Success: ${endpoint}`);
       return {
         success: true,
         data: data,
       };
 
     } catch (error) {
-      console.error('❌ Network Error:', error);
+      console.error(' Network Error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Error de conexión',
@@ -163,14 +163,14 @@ class APIClient {
       body: JSON.stringify({ email, password }),
     });
 
-    console.log('🔍 API Client - Full response:', JSON.stringify(response, null, 2));
+    console.log(' API Client - Full response:', JSON.stringify(response, null, 2));
     
     if (response.success && response.data && response.data.data) {
-      console.log('🔍 API Client - Extracting token from response.data.data');
-      console.log('🔍 API Client - Token found:', response.data.data.token);
+      console.log(' API Client - Extracting token from response.data.data');
+      console.log(' API Client - Token found:', response.data.data.token);
       this.setToken(response.data.data.token);
     } else {
-      console.log('❌ API Client - No token found in response structure');
+      console.log(' API Client - No token found in response structure');
     }
 
     return response;

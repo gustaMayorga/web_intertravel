@@ -85,7 +85,7 @@ export default function LoginPage() {
       
       // Si llega hasta aquí, el login fue exitoso
       // La redirección se maneja en el contexto
-      console.log('✅ Login exitoso desde componente');
+      console.log(' Login exitoso desde componente');
     } catch (error) {
       toast({
         title: "Error de conexión",

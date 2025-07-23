@@ -25,11 +25,11 @@ class InterTravelLogger {
 
   private getEmoji(level: LogLevel): string {
     const emojis = {
-      error: '❌',
-      warn: '⚠️',
+      error: '',
+      warn: '️',
       info: 'ℹ️',
-      success: '✅',
-      debug: '🔍'
+      success: '',
+      debug: ''
     };
     return emojis[level];
   }

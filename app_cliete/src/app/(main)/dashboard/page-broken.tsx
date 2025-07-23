@@ -74,13 +74,13 @@ export default function DashboardPage() {
       setLoadingBookings(true);
       setError(null);
       
-      console.log('🔄 Dashboard: Cargando reservas del usuario');
+      console.log(' Dashboard: Cargando reservas del usuario');
       
       const result: BookingsResult = await bookingsService.getUserBookings();
       
       if (result.success && result.bookings) {
         setBookings(result.bookings);
-        console.log(`✅ Dashboard: ${result.bookings.length} reservas cargadas`);
+        console.log(` Dashboard: ${result.bookings.length} reservas cargadas`);
         
         if (result.bookings.length === 0) {
           toast({
@@ -90,12 +90,12 @@ export default function DashboardPage() {
         }
       } else {
         setError(result.error || 'Error cargando reservas');
-        console.error('❌ Dashboard: Error cargando reservas', result.error);
+        console.error(' Dashboard: Error cargando reservas', result.error);
       }
     } catch (error) {
       const errorMessage = 'Error de conexión al cargar reservas';
       setError(errorMessage);
-      console.error('❌ Dashboard: Error de conexión', error);
+      console.error(' Dashboard: Error de conexión', error);
       
       toast({
         title: "Error de conexión",
@@ -116,12 +116,12 @@ export default function DashboardPage() {
       
       if (result.success && result.stats) {
         setUserStats(result.stats);
-        console.log('✅ Dashboard: Estadísticas cargadas');
+        console.log(' Dashboard: Estadísticas cargadas');
       } else {
-        console.log('⚠️ Dashboard: No se pudieron cargar estadísticas');
+        console.log('️ Dashboard: No se pudieron cargar estadísticas');
       }
     } catch (error) {
-      console.error('❌ Dashboard: Error cargando estadísticas', error);
+      console.error(' Dashboard: Error cargando estadísticas', error);
     } finally {
       setLoadingStats(false);
     }
@@ -129,22 +129,22 @@ export default function DashboardPage() {
 
   // Efecto para cargar datos al montar el componente
   useEffect(() => {
-    console.log('🔍 Dashboard useEffect - isAuthenticated:', isAuthenticated);
-    console.log('🔍 Dashboard useEffect - currentUser:', currentUser);
+    console.log(' Dashboard useEffect - isAuthenticated:', isAuthenticated);
+    console.log(' Dashboard useEffect - currentUser:', currentUser);
     
     if (isAuthenticated && currentUser) {
-      console.log('🚀 Usuario autenticado - cargando datos');
+      console.log(' Usuario autenticado - cargando datos');
       loadUserBookings();
       loadUserStats();
     } else {
-      console.log('⚠️ Usuario NO autenticado - saltando carga de datos');
+      console.log('️ Usuario NO autenticado - saltando carga de datos');
     }
   }, [isAuthenticated, currentUser]);
 
   // Función para recargar datos
   const handleRefresh = async () => {
     if (isAuthenticated) {
-      console.log('🔄 Dashboard: Recarga manual solicitada');
+      console.log(' Dashboard: Recarga manual solicitada');
       await Promise.all([
         loadUserBookings(),
         loadUserStats(),
@@ -196,7 +196,7 @@ export default function DashboardPage() {
       {/* Header personalizado */}
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold text-primary tracking-tight">
-          ¡Hola, {currentUser?.firstName || currentUser?.displayName || 'Viajero'}! 👋
+          ¡Hola, {currentUser?.firstName || currentUser?.displayName || 'Viajero'}! 
         </h1>
         <p className="text-xl text-muted-foreground mt-2">
           {upcomingTrip 
@@ -280,7 +280,7 @@ export default function DashboardPage() {
               </div>
             </div>
             
-            <div className="text-4xl my-4">✈️</div>
+            <div className="text-4xl my-4">️</div>
             
             <Link href={`/reservas/${upcomingTrip.id}`}>
               <Button variant="outline" className="bg-white text-blue-600 hover:bg-white/90 border-white shadow-lg">
@@ -419,7 +419,7 @@ export default function DashboardPage() {
               <Sun className="h-6 w-6 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-foreground">22°C</div>
+              <div className="text-3xl font-bold text-foreground">22degC</div>
               <p className="text-sm text-muted-foreground mt-1">Soleado con algunas nubes</p>
               <p className="text-xs text-muted-foreground mt-2">
                 Información actualizada para tu viaje del {bookingsService.formatShortDate(upcomingTrip.travelDate)}

@@ -46,17 +46,17 @@ export default function FirebaseStatusIndicator() {
         <CardDescription className="text-xs">
           {isFirebaseEnabled && (
             <span className="text-green-600">
-              🔥 Firebase configurado y funcionando correctamente
+               Firebase configurado y funcionando correctamente
             </span>
           )}
           {isMockMode && (
             <span className="text-blue-600">
-              🔧 Modo desarrollo: La app funciona sin Firebase usando datos locales
+               Modo desarrollo: La app funciona sin Firebase usando datos locales
             </span>
           )}
           {isOfflineMode && !isMockMode && (
             <span className="text-orange-600">
-              ⚠️ Firebase no disponible: Funcionalidad limitada sin autenticación
+              ️ Firebase no disponible: Funcionalidad limitada sin autenticación
             </span>
           )}
         </CardDescription>

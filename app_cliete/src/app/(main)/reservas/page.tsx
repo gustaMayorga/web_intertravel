@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * 🏨 MIS RESERVAS - APP CLIENTE INTERTRAVEL
+ *  MIS RESERVAS - APP CLIENTE INTERTRAVEL
  * =========================================
  * 
- * ✅ Vista completa de reservas del cliente desde backend
- * ✅ Estados en tiempo real
- * ✅ Detalles de viaje y pagos reales
- * ✅ Comunicación directa con InterTravel
+ *  Vista completa de reservas del cliente desde backend
+ *  Estados en tiempo real
+ *  Detalles de viaje y pagos reales
+ *  Comunicación directa con InterTravel
  */
 
 import { useState, useEffect } from 'react';
@@ -39,15 +39,15 @@ import Link from 'next/link';
 import { useToast } from "@/hooks/use-toast";
 import Image from 'next/image';
 import { useAuth } from '@/contexts/auth-context';
-// import { useBookingsService } from '@/services/bookings-service'; // ❌ REMOVIDO
+// import { useBookingsService } from '@/services/bookings-service'; //  REMOVIDO
 import { type Booking, type UserStats } from '@/services/api-client';
 
 export default function ReservasPage() {
   const { currentUser, isAuthenticated } = useAuth();
   const { toast } = useToast();
-  // const bookingsService = useBookingsService(); // ❌ No existe
+  // const bookingsService = useBookingsService(); //  No existe
   
-  // ✅ Usar instancia directa:
+  //  Usar instancia directa:
   // import { bookingsService } from "@/services/bookings-service";
   
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -70,8 +70,8 @@ export default function ReservasPage() {
       setLoading(true);
       setError(null);
       
-      console.log('📊 Cargando reservas del usuario...');
-      console.log('🔍 bookingsService:', bookingsService); // DEBUG
+      console.log(' Cargando reservas del usuario...');
+      console.log(' bookingsService:', bookingsService); // DEBUG
       
       if (!bookingsService) {
         throw new Error('bookingsService is undefined');
@@ -81,7 +81,7 @@ export default function ReservasPage() {
       const bookingsResult = await bookingsService.getUserBookings();
       if (bookingsResult.success && bookingsResult.bookings) {
         setBookings(bookingsResult.bookings);
-        console.log(`✅ ${bookingsResult.bookings.length} reservas cargadas`);
+        console.log(` ${bookingsResult.bookings.length} reservas cargadas`);
       } else {
         throw new Error(bookingsResult.error || 'Error cargando reservas');
       }
@@ -93,7 +93,7 @@ export default function ReservasPage() {
       }
       
     } catch (error) {
-      console.error('❌ Error cargando datos:', error);
+      console.error(' Error cargando datos:', error);
       setError(error instanceof Error ? error.message : 'Error desconocido');
       
       toast({

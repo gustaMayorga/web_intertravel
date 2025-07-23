@@ -21,20 +21,20 @@ if (FIREBASE_ENABLED && firebaseConfig &&
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
     db = getFirestore(app);
-    console.log("✅ Firebase initialized successfully.");
+    console.log(" Firebase initialized successfully.");
   } catch (error) {
-    console.error("❌ Firebase initialization error:", error);
+    console.error(" Firebase initialization error:", error);
     app = null;
     auth = null;
     db = null;
   }
 } else {
   if (MOCK_MODE) {
-    console.log("🔧 Firebase en modo MOCK - La app funciona sin Firebase");
-    console.log("📱 Usando datos locales para desarrollo");
+    console.log(" Firebase en modo MOCK - La app funciona sin Firebase");
+    console.log(" Usando datos locales para desarrollo");
   } else {
     console.warn(
-      "⚠️ Firebase no configurado correctamente.\n" +
+      "️ Firebase no configurado correctamente.\n" +
       "La app funcionará en modo local sin autenticación Firebase.\n" +
       "Para habilitar Firebase, configura firebaseConfig.js con credenciales reales."
     );
@@ -47,7 +47,7 @@ const createUserProfileDocument = async (userAuth: any) => {
 
   if (!db) {
     if (MOCK_MODE) {
-      console.log("🔧 Mock: createUserProfileDocument - Firebase deshabilitado");
+      console.log(" Mock: createUserProfileDocument - Firebase deshabilitado");
       return Promise.resolve(null);
     }
     console.warn("Firestore no disponible - función deshabilitada");
@@ -94,7 +94,7 @@ export {
 
 // Log del estado para debugging
 if (typeof window !== 'undefined') {
-  console.log("🔍 Firebase Status:", {
+  console.log(" Firebase Status:", {
     enabled: FIREBASE_ENABLED,
     mockMode: MOCK_MODE,
     app: !!app,

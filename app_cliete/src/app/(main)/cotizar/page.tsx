@@ -127,19 +127,19 @@ export default function CotizarPage() {
       });
     };
 
-    return `🎯 *SOLICITUD DE COTIZACIÓN - INTERTRAVEL*
+    return ` *SOLICITUD DE COTIZACIÓN - INTERTRAVEL*
 
-📦 *Paquete:* ${packageData?.title || 'Paquete seleccionado'}
-📍 *Destino:* ${packageData?.destination || 'Destino'}
-👤 *Cliente:* ${formData.firstName} ${formData.lastName}
-📧 *Email:* ${formData.email}
-📱 *Teléfono:* ${formData.phone}
-👥 *Viajeros:* ${formData.adults} adultos${formData.children > 0 ? `, ${formData.children} niños` : ''}
-📅 *Fecha preferida:* ${formatDate(formData.departureDate)}
-💰 *Presupuesto:* ${formData.budget || 'Flexible'}
-🏨 *Tipo de habitación:* ${formData.roomType || 'A definir'}
+ *Paquete:* ${packageData?.title || 'Paquete seleccionado'}
+ *Destino:* ${packageData?.destination || 'Destino'}
+ *Cliente:* ${formData.firstName} ${formData.lastName}
+ *Email:* ${formData.email}
+ *Teléfono:* ${formData.phone}
+ *Viajeros:* ${formData.adults} adultos${formData.children > 0 ? `, ${formData.children} niños` : ''}
+ *Fecha preferida:* ${formatDate(formData.departureDate)}
+ *Presupuesto:* ${formData.budget || 'Flexible'}
+ *Tipo de habitación:* ${formData.roomType || 'A definir'}
 
-${formData.specialRequests ? `📝 *Solicitudes especiales:*\n${formData.specialRequests}\n\n` : ''}Por favor, envíenme una cotización personalizada para este viaje.
+${formData.specialRequests ? ` *Solicitudes especiales:*\n${formData.specialRequests}\n\n` : ''}Por favor, envíenme una cotización personalizada para este viaje.
 
 ¡Muchas gracias!`;
   };
@@ -163,11 +163,11 @@ ${formData.specialRequests ? `📝 *Solicitudes especiales:*\n${formData.special
               <div className="space-y-3">
                 <h3 className="font-semibold">¿Qué sigue?</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Tu mensaje fue enviado a nuestro WhatsApp: +54 9 11 3456-7890</li>
-                  <li>• Nuestro equipo te responderá por WhatsApp en los próximos minutos</li>
-                  <li>• Recibirás una cotización personalizada con todos los detalles</li>
-                  <li>• Podrás hacer ajustes al itinerario según tus preferencias</li>
-                  <li>• Una vez aprobado, te ayudaremos con todo el proceso de reserva</li>
+                  <li>* Tu mensaje fue enviado a nuestro WhatsApp: +54 9 11 3456-7890</li>
+                  <li>* Nuestro equipo te responderá por WhatsApp en los próximos minutos</li>
+                  <li>* Recibirás una cotización personalizada con todos los detalles</li>
+                  <li>* Podrás hacer ajustes al itinerario según tus preferencias</li>
+                  <li>* Una vez aprobado, te ayudaremos con todo el proceso de reserva</li>
                 </ul>
               </div>
             </CardContent>
@@ -181,7 +181,7 @@ ${formData.specialRequests ? `📝 *Solicitudes especiales:*\n${formData.special
               }}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
-              📱 Abrir WhatsApp Nuevamente
+               Abrir WhatsApp Nuevamente
             </Button>
             
             <div className="flex space-x-4 justify-center">

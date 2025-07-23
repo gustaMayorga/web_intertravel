@@ -16,13 +16,13 @@ import { auth as firebaseAuthChecker } from "@/firebase/firebase"; // For checki
 export default function ProfilePage() {
   const { currentUser, signOut, loading } = useAuth();
 
-  // ✅ Generar displayName si no existe
+  //  Generar displayName si no existe
   const getDisplayName = (user: typeof currentUser) => {
     if (!user) return 'Usuario';
     return user.displayName || user.fullName || `${user.firstName} ${user.lastName}` || 'Usuario';
   };
 
-  // ✅ Generar initiales para avatar
+  //  Generar initiales para avatar
   const getInitials = (user: typeof currentUser) => {
     if (!user) return 'U';
     const name = getDisplayName(user);

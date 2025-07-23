@@ -102,7 +102,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       });
     }
 
-    console.log('📱 Nueva notificación:', newNotification);
+    console.log(' Nueva notificación:', newNotification);
   };
 
   // Marcar como leída
@@ -185,7 +185,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
       setTimeout(() => {
         addNotification({
-          title: '📋 Recordatorio de viaje',
+          title: ' Recordatorio de viaje',
           message: 'Tu viaje a Camboriú está próximo. Revisa tu checklist de preparación.',
           type: 'travel',
           priority: 'high',

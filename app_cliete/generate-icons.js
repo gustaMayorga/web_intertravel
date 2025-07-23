@@ -1,14 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🎨 Generando iconos faltantes para InterTravel App...\n');
+console.log(' Generando iconos faltantes para InterTravel App...\n');
 
 const iconsDir = 'D:\\Inter\\intertravel-website\\WEB-FINAL-UNIFICADA\\app_cliete\\public\\icons';
 
 // Asegurar que el directorio existe
 if (!fs.existsSync(iconsDir)) {
     fs.mkdirSync(iconsDir, { recursive: true });
-    console.log('📁 Directorio icons creado');
+    console.log(' Directorio icons creado');
 }
 
 // Tamaños de iconos necesarios
@@ -42,15 +42,15 @@ sizes.forEach(size => {
     const filepath = path.join(iconsDir, filename);
     
     fs.writeFileSync(filepath, svgContent, 'utf8');
-    console.log(`✅ Creado: ${filename}`);
+    console.log(` Creado: ${filename}`);
 });
 
 // Crear también un favicon.ico como SVG
 const faviconContent = createSVG(32);
 fs.writeFileSync(path.join(iconsDir, 'favicon.svg'), faviconContent, 'utf8');
-console.log('✅ Creado: favicon.svg');
+console.log(' Creado: favicon.svg');
 
-console.log('\n🎉 Todos los iconos generados exitosamente!');
-console.log('📝 Archivos creados en:', iconsDir);
-console.log('\n💡 Nota: Los archivos son SVG, que son compatibles.');
+console.log('\n Todos los iconos generados exitosamente!');
+console.log(' Archivos creados en:', iconsDir);
+console.log('\n Nota: Los archivos son SVG, que son compatibles.');
 console.log('   Los navegadores modernos los manejan como PNG/ICO.');

@@ -19,5 +19,5 @@ export const firebaseConfig = {
 export const FIREBASE_ENABLED = false;
 export const MOCK_MODE = true;
 
-console.log("🔧 Firebase en modo MOCK para desarrollo");
-console.log("📱 La app funciona sin Firebase - usando datos locales");
+console.log(" Firebase en modo MOCK para desarrollo");
+console.log(" La app funciona sin Firebase - usando datos locales");

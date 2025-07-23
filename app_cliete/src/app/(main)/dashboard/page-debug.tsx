@@ -8,19 +8,19 @@ export default function DashboardPage() {
   useEffect(() => {
     const testImports = async () => {
       try {
-        console.log('🔍 Testing imports...');
+        console.log(' Testing imports...');
         
         // Test 1: Import api-client directly
         const { apiClient } = await import('@/services/api-client');
-        console.log('🔍 apiClient imported:', apiClient);
-        console.log('🔍 apiClient.getUserBookings:', typeof apiClient?.getUserBookings);
-        console.log('🔍 apiClient.getUserStats:', typeof apiClient?.getUserStats);
+        console.log(' apiClient imported:', apiClient);
+        console.log(' apiClient.getUserBookings:', typeof apiClient?.getUserBookings);
+        console.log(' apiClient.getUserStats:', typeof apiClient?.getUserStats);
         
         // Test 2: Import bookings-service
         const { bookingsService } = await import('@/services/bookings-service-fixed');
-        console.log('🔍 bookingsService imported:', bookingsService);
-        console.log('🔍 bookingsService.getUserBookings:', typeof bookingsService?.getUserBookings);
-        console.log('🔍 bookingsService.getUserStats:', typeof bookingsService?.getUserStats);
+        console.log(' bookingsService imported:', bookingsService);
+        console.log(' bookingsService.getUserBookings:', typeof bookingsService?.getUserBookings);
+        console.log(' bookingsService.getUserStats:', typeof bookingsService?.getUserStats);
         
         // Test 3: Try to call methods
         let testResult = 'Tests:\n';
@@ -34,7 +34,7 @@ export default function DashboardPage() {
         setDebugInfo(testResult);
         
       } catch (error) {
-        console.error('❌ Import test failed:', error);
+        console.error(' Import test failed:', error);
         setDebugInfo(`Error: ${error.message}`);
       }
     };

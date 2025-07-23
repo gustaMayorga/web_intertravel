@@ -93,13 +93,13 @@ export default function ImageDebugger({ packages }: { packages: any[] }) {
         <CardDescription className="text-xs">
           {isChecking ? (
             <span className="text-blue-600">
-              🔍 Verificando {imageStatuses.length} imágenes...
+               Verificando {imageStatuses.length} imágenes...
             </span>
           ) : (
             <span>
-              📊 Total: {imageStatuses.length} imágenes | 
-              ✅ {successCount} cargadas | 
-              ❌ {errorCount} con errores
+               Total: {imageStatuses.length} imágenes | 
+               {successCount} cargadas | 
+               {errorCount} con errores
             </span>
           )}
         </CardDescription>

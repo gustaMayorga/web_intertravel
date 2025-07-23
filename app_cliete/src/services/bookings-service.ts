@@ -35,17 +35,17 @@ class BookingsService {
         };
       }
 
-      console.log('📊 BookingsService: Obteniendo reservas del usuario');
+      console.log(' BookingsService: Obteniendo reservas del usuario');
       
       const response = await apiClient.getUserBookings();
       
-      console.log('🔍 BookingsService: Full response:', JSON.stringify(response, null, 2));
+      console.log(' BookingsService: Full response:', JSON.stringify(response, null, 2));
       
       if (response.success && response.data && response.data.data) {
         const { bookings, total } = response.data.data;
         
-        console.log(`✅ BookingsService: ${total} reservas obtenidas`);
-        console.log('🔍 BookingsService: Bookings data:', bookings);
+        console.log(` BookingsService: ${total} reservas obtenidas`);
+        console.log(' BookingsService: Bookings data:', bookings);
         
         return {
           success: true,
@@ -53,14 +53,14 @@ class BookingsService {
           total
         };
       } else {
-        console.error('❌ BookingsService: Error obteniendo reservas', response.error);
+        console.error(' BookingsService: Error obteniendo reservas', response.error);
         return {
           success: false,
           error: response.error || 'Error obteniendo reservas'
         };
       }
     } catch (error) {
-      console.error('❌ BookingsService: Error de conexión', error);
+      console.error(' BookingsService: Error de conexión', error);
       return {
         success: false,
         error: 'Error de conexión. Verifica tu internet.'
@@ -77,26 +77,26 @@ class BookingsService {
         };
       }
 
-      console.log('📋 BookingsService: Obteniendo detalles de reserva', bookingId);
+      console.log(' BookingsService: Obteniendo detalles de reserva', bookingId);
       
       const response = await apiClient.getBookingDetails(bookingId);
       
       if (response.success && response.data && response.data.data) {
-        console.log('✅ BookingsService: Detalles de reserva obtenidos');
+        console.log(' BookingsService: Detalles de reserva obtenidos');
         
         return {
           success: true,
           booking: response.data.data.booking
         };
       } else {
-        console.error('❌ BookingsService: Error obteniendo detalles', response.error);
+        console.error(' BookingsService: Error obteniendo detalles', response.error);
         return {
           success: false,
           error: response.error || 'Error obteniendo detalles de la reserva'
         };
       }
     } catch (error) {
-      console.error('❌ BookingsService: Error de conexión en detalles', error);
+      console.error(' BookingsService: Error de conexión en detalles', error);
       return {
         success: false,
         error: 'Error de conexión. Verifica tu internet.'
@@ -117,26 +117,26 @@ class BookingsService {
         };
       }
 
-      console.log('📈 BookingsService: Obteniendo estadísticas del usuario');
+      console.log(' BookingsService: Obteniendo estadísticas del usuario');
       
       const response = await apiClient.getUserStats();
       
       if (response.success && response.data && response.data.data) {
-        console.log('✅ BookingsService: Estadísticas obtenidas');
+        console.log(' BookingsService: Estadísticas obtenidas');
         
         return {
           success: true,
           stats: response.data.data.stats
         };
       } else {
-        console.error('❌ BookingsService: Error obteniendo estadísticas', response.error);
+        console.error(' BookingsService: Error obteniendo estadísticas', response.error);
         return {
           success: false,
           error: response.error || 'Error obteniendo estadísticas'
         };
       }
     } catch (error) {
-      console.error('❌ BookingsService: Error de conexión en estadísticas', error);
+      console.error(' BookingsService: Error de conexión en estadísticas', error);
       return {
         success: false,
         error: 'Error de conexión. Verifica tu internet.'

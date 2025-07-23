@@ -10,14 +10,14 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('🔍 HomePage: Auth check', { isAuthenticated, loading });
+    console.log(' HomePage: Auth check', { isAuthenticated, loading });
     
     if (!loading) {
       if (isAuthenticated) {
-        console.log('✅ HomePage: Usuario autenticado, redirigiendo a dashboard');
+        console.log(' HomePage: Usuario autenticado, redirigiendo a dashboard');
         router.push('/dashboard');
       } else {
-        console.log('❌ HomePage: Usuario no autenticado, redirigiendo a login');
+        console.log(' HomePage: Usuario no autenticado, redirigiendo a login');
         router.push('/login');
       }
     }

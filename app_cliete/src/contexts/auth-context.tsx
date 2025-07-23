@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // SOLO EJECUTAR SI NO ESTAMOS YA CARGANDO
     if (isLoading) return;
     
-    console.log('🔍 AuthContext: Verificando autenticación...');
+    console.log(' AuthContext: Verificando autenticación...');
     setIsLoading(true);
     
     try {
@@ -71,16 +71,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(storedUser);
-        console.log('✅ AuthContext: Usuario autenticado desde localStorage');
+        console.log(' AuthContext: Usuario autenticado desde localStorage');
       } else {
         // Limpiar datos si no hay token válido
         authService.clearAuth();
         setToken(null);
         setUser(null);
-        console.log('⚠️ AuthContext: No hay autenticación válida');
+        console.log('️ AuthContext: No hay autenticación válida');
       }
     } catch (error) {
-      console.error('❌ AuthContext: Error al verificar autenticación:', error);
+      console.error(' AuthContext: Error al verificar autenticación:', error);
       setToken(null);
       setUser(null);
     } finally {
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     try {
       setIsLoading(true);
-      console.log('🔑 AuthContext: Iniciando login desde contexto...');
+      console.log(' AuthContext: Iniciando login desde contexto...');
       
       const response = await authService.login(email, password);
       
@@ -99,16 +99,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(response.token);
       setUser(response.user);
       
-      console.log('✅ AuthContext: Login completado en contexto');
+      console.log(' AuthContext: Login completado en contexto');
       
       // Redirección inmediata después del login exitoso
       setTimeout(() => {
-        console.log('🚀 Redirigiendo al dashboard...');
+        console.log(' Redirigiendo al dashboard...');
         window.location.href = '/dashboard';
       }, 500); // Aumentar tiempo para evitar race conditions
       
     } catch (error) {
-      console.error('❌ AuthContext: Error en login desde contexto:', error);
+      console.error(' AuthContext: Error en login desde contexto:', error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -124,14 +124,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }): Promise<{ success: boolean; error?: string }> => {
     try {
       setIsLoading(true);
-      console.log('📝 AuthContext: Iniciando registro desde contexto...');
+      console.log(' AuthContext: Iniciando registro desde contexto...');
       
       await authService.register(userData);
       
-      console.log('✅ AuthContext: Registro completado en contexto');
+      console.log(' AuthContext: Registro completado en contexto');
       return { success: true };
     } catch (error: any) {
-      console.error('❌ AuthContext: Error en registro desde contexto:', error);
+      console.error(' AuthContext: Error en registro desde contexto:', error);
       return { success: false, error: error.message || 'Error en el registro' };
     } finally {
       setIsLoading(false);
@@ -139,13 +139,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = (): void => {
-    console.log('🚪 AuthContext: Logout desde contexto...');
+    console.log(' AuthContext: Logout desde contexto...');
     
     authService.logout();
     setToken(null);
     setUser(null);
     
-    console.log('✅ AuthContext: Logout completado en contexto');
+    console.log(' AuthContext: Logout completado en contexto');
   };
 
   // Métodos de compatibilidad
@@ -154,7 +154,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await checkAuth();
       return !!user;
     } catch (error) {
-      console.error('❌ AuthContext: Error en refresh:', error);
+      console.error(' AuthContext: Error en refresh:', error);
       return false;
     }
   };
@@ -242,7 +242,7 @@ export const AuthChecker: React.FC = () => {
 
   return (
     <div className="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 max-w-sm z-50">
-      <h3 className="font-bold text-sm mb-2">🔐 Estado de Autenticación</h3>
+      <h3 className="font-bold text-sm mb-2"> Estado de Autenticación</h3>
       <div className="space-y-1 text-xs">
         <div className={`flex items-center gap-2 ${isAuthenticated ? 'text-green-600' : 'text-red-600'}`}>
           <span className={`w-2 h-2 rounded-full ${isAuthenticated ? 'bg-green-500' : 'bg-red-500'}`}></span>

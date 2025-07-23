@@ -23,11 +23,11 @@ export interface StatsResult {
 
 class BookingsService {
   constructor() {
-    console.log('🔍 BookingsService constructor - apiClient:', apiClient);
-    console.log('🔍 BookingsService constructor - authService:', authService);
+    console.log(' BookingsService constructor - apiClient:', apiClient);
+    console.log(' BookingsService constructor - authService:', authService);
     if (apiClient) {
-      console.log('🔍 BookingsService constructor - apiClient.getUserBookings:', typeof apiClient.getUserBookings);
-      console.log('🔍 BookingsService constructor - apiClient.getUserStats:', typeof apiClient.getUserStats);
+      console.log(' BookingsService constructor - apiClient.getUserBookings:', typeof apiClient.getUserBookings);
+      console.log(' BookingsService constructor - apiClient.getUserStats:', typeof apiClient.getUserStats);
     }
   }
 
@@ -37,8 +37,8 @@ class BookingsService {
 
   async getUserBookings(): Promise<BookingsResult> {
     try {
-      console.log('🔍 getUserBookings - apiClient:', apiClient);
-      console.log('🔍 getUserBookings - apiClient.getUserBookings:', apiClient?.getUserBookings);
+      console.log(' getUserBookings - apiClient:', apiClient);
+      console.log(' getUserBookings - apiClient.getUserBookings:', apiClient?.getUserBookings);
       
       // Verificar autenticación
       if (!authService.isAuthenticated()) {
@@ -48,7 +48,7 @@ class BookingsService {
         };
       }
 
-      console.log('📊 BookingsService: Obteniendo reservas del usuario');
+      console.log(' BookingsService: Obteniendo reservas del usuario');
       
       if (!apiClient) {
         throw new Error('apiClient is undefined in BookingsService');
@@ -58,13 +58,13 @@ class BookingsService {
         throw new Error('apiClient.getUserBookings is undefined');
       }
       
-      console.log('🔍 getUserBookings - about to call apiClient.getUserBookings');
+      console.log(' getUserBookings - about to call apiClient.getUserBookings');
       const response = await apiClient.getUserBookings();
       
       if (response.success && response.data) {
         const { bookings, total } = response.data;
         
-        console.log(`✅ BookingsService: ${total} reservas obtenidas`);
+        console.log(` BookingsService: ${total} reservas obtenidas`);
         
         return {
           success: true,
@@ -72,14 +72,14 @@ class BookingsService {
           total
         };
       } else {
-        console.error('❌ BookingsService: Error obteniendo reservas', response.error);
+        console.error(' BookingsService: Error obteniendo reservas', response.error);
         return {
           success: false,
           error: response.error || 'Error obteniendo reservas'
         };
       }
     } catch (error) {
-      console.error('❌ BookingsService: Error de conexión', error);
+      console.error(' BookingsService: Error de conexión', error);
       return {
         success: false,
         error: 'Error de conexión. Verifica tu internet.'
@@ -96,26 +96,26 @@ class BookingsService {
         };
       }
 
-      console.log('📋 BookingsService: Obteniendo detalles de reserva', bookingId);
+      console.log(' BookingsService: Obteniendo detalles de reserva', bookingId);
       
       const response = await apiClient.getBookingDetails(bookingId);
       
       if (response.success && response.data) {
-        console.log('✅ BookingsService: Detalles de reserva obtenidos');
+        console.log(' BookingsService: Detalles de reserva obtenidos');
         
         return {
           success: true,
           booking: response.data.booking
         };
       } else {
-        console.error('❌ BookingsService: Error obteniendo detalles', response.error);
+        console.error(' BookingsService: Error obteniendo detalles', response.error);
         return {
           success: false,
           error: response.error || 'Error obteniendo detalles de la reserva'
         };
       }
     } catch (error) {
-      console.error('❌ BookingsService: Error de conexión en detalles', error);
+      console.error(' BookingsService: Error de conexión en detalles', error);
       return {
         success: false,
         error: 'Error de conexión. Verifica tu internet.'
@@ -129,8 +129,8 @@ class BookingsService {
 
   async getUserStats(): Promise<StatsResult> {
     try {
-      console.log('🔍 getUserStats - apiClient:', apiClient);
-      console.log('🔍 getUserStats - apiClient.getUserStats:', apiClient?.getUserStats);
+      console.log(' getUserStats - apiClient:', apiClient);
+      console.log(' getUserStats - apiClient.getUserStats:', apiClient?.getUserStats);
       
       if (!authService.isAuthenticated()) {
         return {
@@ -139,7 +139,7 @@ class BookingsService {
         };
       }
 
-      console.log('📈 BookingsService: Obteniendo estadísticas del usuario');
+      console.log(' BookingsService: Obteniendo estadísticas del usuario');
       
       if (!apiClient) {
         throw new Error('apiClient is undefined in BookingsService');
@@ -149,25 +149,25 @@ class BookingsService {
         throw new Error('apiClient.getUserStats is undefined');
       }
       
-      console.log('🔍 getUserStats - about to call apiClient.getUserStats');
+      console.log(' getUserStats - about to call apiClient.getUserStats');
       const response = await apiClient.getUserStats();
       
       if (response.success && response.data) {
-        console.log('✅ BookingsService: Estadísticas obtenidas');
+        console.log(' BookingsService: Estadísticas obtenidas');
         
         return {
           success: true,
           stats: response.data.stats
         };
       } else {
-        console.error('❌ BookingsService: Error obteniendo estadísticas', response.error);
+        console.error(' BookingsService: Error obteniendo estadísticas', response.error);
         return {
           success: false,
           error: response.error || 'Error obteniendo estadísticas'
         };
       }
     } catch (error) {
-      console.error('❌ BookingsService: Error de conexión en estadísticas', error);
+      console.error(' BookingsService: Error de conexión en estadísticas', error);
       return {
         success: false,
         error: 'Error de conexión. Verifica tu internet.'
@@ -323,7 +323,7 @@ class BookingsService {
 }
 
 // Verificar que apiClient esté disponible antes de crear la instancia
-console.log('🔍 Pre-instantiation check - apiClient:', apiClient);
+console.log(' Pre-instantiation check - apiClient:', apiClient);
 
 // Instancia singleton del servicio de reservas
 export const bookingsService = new BookingsService();

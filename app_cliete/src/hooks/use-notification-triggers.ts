@@ -18,7 +18,7 @@ export function useNotificationTriggers() {
       // Notificación de bienvenida (después de 3 segundos)
       timeouts.push(setTimeout(() => {
         addNotification({
-          title: `¡Hola, ${currentUser.firstName}! 👋`,
+          title: `¡Hola, ${currentUser.firstName}! `,
           message: 'Te damos la bienvenida a tu centro de viajes. Aquí encontrarás toda la información de tus reservas.',
           type: 'info',
           priority: 'medium'
@@ -28,7 +28,7 @@ export function useNotificationTriggers() {
       // Notificación de documentación (después de 10 segundos)
       timeouts.push(setTimeout(() => {
         addNotification({
-          title: '📋 Recordatorio importante',
+          title: ' Recordatorio importante',
           message: 'Revisa que tus documentos de viaje estén vigentes. Es importante verificar pasaporte y visas.',
           type: 'warning',
           priority: 'high',
@@ -40,7 +40,7 @@ export function useNotificationTriggers() {
       // Notificación de promoción (después de 20 segundos)
       timeouts.push(setTimeout(() => {
         addNotification({
-          title: '🎉 ¡Oferta especial!',
+          title: ' ¡Oferta especial!',
           message: 'Descubre nuestros nuevos paquetes a Europa con 20% de descuento. ¡Cupos limitados!',
           type: 'success',
           priority: 'medium',
@@ -53,7 +53,7 @@ export function useNotificationTriggers() {
       // Notificación de pago pendiente (después de 30 segundos)
       timeouts.push(setTimeout(() => {
         addNotification({
-          title: '💳 Pago pendiente',
+          title: ' Pago pendiente',
           message: 'Tienes un saldo pendiente en tu reserva a Camboriú. Completa el pago para asegurar tu lugar.',
           type: 'payment',
           priority: 'high',
@@ -66,8 +66,8 @@ export function useNotificationTriggers() {
       // Notificación de clima (después de 45 segundos)
       timeouts.push(setTimeout(() => {
         addNotification({
-          title: '🌤️ Clima de tu destino',
-          message: 'El clima en Camboriú estará perfecto durante tu viaje: 24°C y soleado. ¡Ideal para la playa!',
+          title: '️ Clima de tu destino',
+          message: 'El clima en Camboriú estará perfecto durante tu viaje: 24degC y soleado. ¡Ideal para la playa!',
           type: 'travel',
           priority: 'low',
           actionUrl: '/details',
@@ -78,7 +78,7 @@ export function useNotificationTriggers() {
       // Notificación urgente de último momento (después de 60 segundos)
       timeouts.push(setTimeout(() => {
         addNotification({
-          title: '🚨 Actualización de vuelo',
+          title: ' Actualización de vuelo',
           message: 'IMPORTANTE: Tu vuelo IB6840 del 15/08 ha cambiado la hora de salida a las 14:30hs. Verifica tu itinerario.',
           type: 'error',
           priority: 'urgent',
@@ -101,19 +101,19 @@ export function useNotificationTriggers() {
   const triggerBookingNotification = (bookingId: string, action: 'confirmed' | 'payment' | 'cancelled') => {
     const notifications = {
       confirmed: {
-        title: '✅ Reserva confirmada',
+        title: ' Reserva confirmada',
         message: 'Tu reserva ha sido confirmada exitosamente. ¡Prepárate para una experiencia increíble!',
         type: 'success' as const,
         priority: 'high' as const
       },
       payment: {
-        title: '💰 Pago procesado',
+        title: ' Pago procesado',
         message: 'Tu pago ha sido procesado correctamente. Recibirás un email con la confirmación.',
         type: 'payment' as const,
         priority: 'medium' as const
       },
       cancelled: {
-        title: '❌ Reserva cancelada',
+        title: ' Reserva cancelada',
         message: 'Tu reserva ha sido cancelada. Si necesitas ayuda, contacta con nuestro equipo de soporte.',
         type: 'error' as const,
         priority: 'high' as const
@@ -136,7 +136,7 @@ export function useNotificationTriggers() {
         : `¡Solo faltan ${daysUntilTravel} días para tu viaje a ${destination}! Asegúrate de tener todo listo.`;
 
       addNotification({
-        title: '🗓️ Recordatorio de viaje',
+        title: '️ Recordatorio de viaje',
         message,
         type: 'travel',
         priority: daysUntilTravel <= 3 ? 'urgent' : 'high',
@@ -149,7 +149,7 @@ export function useNotificationTriggers() {
 
   const triggerWeatherAlert = (destination: string, weather: string) => {
     addNotification({
-      title: '🌦️ Alerta climática',
+      title: '️ Alerta climática',
       message: `Condiciones climáticas especiales en ${destination}: ${weather}. Ajusta tu equipaje según corresponda.`,
       type: 'warning',
       priority: 'medium',
@@ -160,7 +160,7 @@ export function useNotificationTriggers() {
 
   const triggerSystemMaintenance = () => {
     addNotification({
-      title: '🔧 Mantenimiento programado',
+      title: ' Mantenimiento programado',
       message: 'El sistema estará en mantenimiento el domingo de 02:00 a 04:00 AM. Durante ese tiempo no podrás acceder.',
       type: 'info',
       priority: 'low',
