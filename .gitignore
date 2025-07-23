@@ -1,116 +1,14 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Build outputs
-dist/
-build/
-out/
-
-# Cache
-.cache/
-.parcel-cache/
-.next/
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Temporary files
-tmp/
-temp/
-
-# Archives
-*.zip
-*.tar.gz
-*.rar
-
-# Database
-*.sqlite
-*.db
-
-# Backup files
-*.bak
-*.backup
-*_backup_*
-BACKUP*/
-_DUPLICADOS_OBSOLETOS/
-
-# Testing outputs
-TESTING/
-
-# Scripts de desarrollo local
-*.bat
-*.sh
-
-# Archivos de documentación extensos y temporales
-AGENTE-*.md
-ANALISIS-*.md
-CONTEXTO-*.md
-CORRECCIONES-*.md
-DOCUMENTACION-*.md
-LIMPIEZA-*.md
-MASTER-*.md
-PLAN-*.md
-REPARACION-*.md
-SOLUCION-*.md
-TRAVEL-COMPOSITOR-*.md
-
-# Mantener solo README principal
-!README.md
-
-# Archivos específicos del proyecto a ignorar
-agency-portal.html
-diagnostic*.html
-landing_backup_*.html
-nombre_landingmaps.bkp
-TESTING-*.html
-
-# Directorios específicos
-SCRIPTS-BACKUP/
-_DUPLICADOS_OBSOLETOS/
-_backups/
-TESTING/
-BACKUP*/
-android/
-out/
-.next/
+node_modules/ 
+*.log 
+.env.local 
+.DS_Store 
+*.tmp 
+temp* 
+backup* 
+_backup* 
+_z_archive* 
+*.bat 
+diagnostic*.html 
+TESTING/*.html 
+*.bak 
+lightsail-key.pem 

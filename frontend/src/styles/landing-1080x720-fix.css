@@ -1,0 +1,278 @@
+/**
+ * 📺 CORRECCIÓN ESPECÍFICA 1080x720 - LANDING PÚBLICO
+ * =====================================================
+ * 
+ * ✅ Hace que 100% se vea como 67% (proporciones perfectas)
+ * ✅ Elimina botones del hero, centra buscador, reduce títulos
+ * ✅ Solo se activa en pantallas 1080px+ width y 720px height
+ */
+
+/* 🔥 ESPECÍFICO: 1080x720 - Simulando 67% zoom */
+@media (min-width: 1080px) and (max-height: 720px) {
+  
+  /* ===== TÍTULOS HERO - MÁS COMPACTOS (como 67%) ===== */
+  .text-3xl {
+    font-size: 1rem !important; /* Muy compacto */
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .text-4xl {
+    font-size: 1.25rem !important; /* Compacto */
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .text-6xl {
+    font-size: 1.5rem !important; /* Muy compacto */
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .text-lg {
+    font-size: 0.875rem !important; /* Más pequeño */
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .text-xl {
+    font-size: 1rem !important; /* Más pequeño */
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .text-2xl {
+    font-size: 1.125rem !important; /* Más pequeño */
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* ===== RESPONSIVE BREAKPOINTS - SIMULANDO 67% ===== */
+  .sm\\:text-4xl {
+    font-size: 1.25rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .md\\:text-6xl {
+    font-size: 1.5rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .sm\\:text-xl {
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .md\\:text-2xl {
+    font-size: 1.125rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* ===== SPACING ULTRA COMPACTO - SIMULANDO 67% ===== */
+  .min-h-screen {
+    min-height: 480px !important; /* Más compacto */
+  }
+  
+  .py-8 {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  
+  .py-12 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  
+  .mb-8 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .mb-12 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .mb-4 {
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .mb-6 {
+    margin-bottom: 0.375rem !important;
+  }
+  
+  .sm\\:mb-12 {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  /* ===== CONTAINERS OPTIMIZADOS - SIMULANDO 67% ===== */
+  .max-w-6xl {
+    max-width: 800px !important; /* Más estrecho */
+  }
+  
+  .max-w-7xl {
+    max-width: 900px !important; /* Más estrecho */
+  }
+  
+  .max-w-2xl {
+    max-width: 500px !important; /* Más estrecho */
+  }
+  
+  /* ===== PADDING ULTRA COMPACTO ===== */
+  .px-4 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+  
+  .px-6 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  .sm\\:px-6 {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  /* ===== BOTONES COMPACTOS - SIMULANDO 67% ===== */
+  .bg-blue-600,
+  .bg-purple-600,
+  .bg-orange-500 {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.75rem !important;
+    min-height: 30px !important;
+  }
+  
+  /* ===== CARDS Y GRIDS - SIMULANDO 67% ===== */
+  .rounded-lg {
+    padding: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .grid {
+    gap: 0.5rem !important;
+  }
+  
+  .space-y-8 > * + * {
+    margin-top: 0.5rem !important;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 0.25rem !important;
+  }
+  
+  /* ===== HEADER COMPACTO - SIMULANDO 67% ===== */
+  .h-20 {
+    height: 50px !important;
+  }
+  
+  .fixed {
+    height: 50px !important;
+  }
+  
+  /* ===== ELEMENTOS ESPECÍFICOS - SIMULANDO 67% ===== */
+  .leading-tight {
+    line-height: 1.1 !important;
+  }
+  
+  .font-light {
+    font-weight: 300 !important;
+  }
+  
+  .relative.z-10 {
+    padding: 0.25rem !important;
+  }
+  
+  /* ===== SEARCH BAR CENTRADO Y COMPACTO ===== */
+  .search-container,
+  .unified-search {
+    max-width: 600px !important;
+    margin: 0 auto !important;
+    padding: 0.5rem !important;
+  }
+  
+  /* ===== OCULTAR BOTONES DEL HERO (Cusco, Paris, etc.) ===== */
+  .destinations-carousel,
+  .destinations-grid,
+  .trending-destinations,
+  .featured-destinations {
+    display: none !important;
+  }
+  
+  /* Selector más específico para ocultar cards de destinos */
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6 {
+    display: none !important;
+  }
+  
+  /* Ocultar sección "Destinos Trending" completa */
+  .text-center.mb-12 + .grid {
+    display: none !important;
+  }
+  
+  /* ===== CENTRALIZAR BUSCADOR ===== */
+  .hero-search,
+  .search-section {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+  }
+  
+  /* ===== REDUCIR TÍTULOS QUE CAMBIAN EN HERO ===== */
+  .hero-title,
+  .hero-subtitle,
+  .dynamic-title {
+    text-align: center !important;
+    max-width: 600px !important;
+    margin: 0 auto !important;
+  }
+  
+  /* ===== OVERFLOW CONTROL ===== */
+  .overflow-hidden {
+    max-height: 720px !important;
+  }
+  
+  /* ===== BACKGROUND SECTIONS ===== */
+  .absolute.inset-0 {
+    height: 480px !important;
+  }
+  
+  /* ===== FONT SIZES GENERALES MÁS COMPACTOS ===== */
+  h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  h2 {
+    font-size: 1.25rem !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  h3 {
+    font-size: 1.125rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  p {
+    font-size: 0.875rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0.25rem !important;
+  }
+  
+  /* ===== NAVIGATION COMPACTA ===== */
+  nav a,
+  .nav-link {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+  
+  /* ===== ELIMINAMOS SCROLL INNECESARIO ===== */
+  .flex-col.justify-center {
+    min-height: 400px !important;
+  }
+}

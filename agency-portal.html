@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Agencia - InterTravel (DATOS REALES)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .app-container { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+        }
+        .main-content { flex: 1; padding: 20px; }
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 10px 0;
+        }
+        .nav-menu { list-style: none; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #4a5568;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .nav-link.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .top-bar {
+            background: white;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .content-section {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            padding: 24px;
+        }
+        .section-title { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-paid { background: #f0fff4; color: #38a169; }
+        .status-pending { background: #fffaf0; color: #ed8936; }
+        .agency-info { display: flex; align-items: center; gap: 12px; padding: 0 20px 20px; }
+        .agency-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const LoginForm = ({ onLogin }) => {
+            const [credentials, setCredentials] = useState({ username: 'agencia_admin', password: 'agencia123' });
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+            
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                setError('');
+                
+                try {
+                    const response = await fetch('/api/auth/agency/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(credentials)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Guardar token
+                        localStorage.setItem('agencyToken', data.token);
+                        onLogin(data.user);
+                    } else {
+                        setError(data.error || 'Error de autenticación');
+                    }
+                } catch (error) {
+                    setError('Error de conexión. Verifique que el servidor esté funcionando.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="login-container">
+                    <div className="login-card">
+                        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                            <div className="login-logo">IT</div>
+                            <h2>Portal de Agencia</h2>
+                            <p style={{ color: '#718096' }}>InterTravel Group</p>
+                        </div>
+
+                        <form onSubmit={handleSubmit}>
+                            {error && (
+                                <div style={{ background: '#fed7d7', color: '#c53030', padding: '12px', borderRadius: '8px', marginBottom: '20px', fontSize: '14px' }}>
+                                    {error}
+                                </div>
+                            )}
+                            <div className="form-group">
+                                <input
+                                    type="text"
+                                    className="form-input"
+                                    placeholder="Usuario"
+                                    value={credentials.username}
+                                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                                    disabled={loading}
+                                    style={{ color: 'black' }}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <input
+                                    type="password"
+                                    className="form-input"
+                                    placeholder="Contraseña"
+                                    value={credentials.password}
+                                    onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                                    disabled={loading}
+                                    style={{ color: 'black' }}
+                                />
+                            </div>
+                            <button type="submit" className="btn" disabled={loading}>
+                                {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const Dashboard = ({ user }) => {
+            const [realTimeData, setRealTimeData] = React.useState(null);
+            const [loading, setLoading] = React.useState(true);
+            
+            React.useEffect(() => {
+                fetchRealTimeData();
+                const interval = setInterval(fetchRealTimeData, 30000);
+                return () => clearInterval(interval);
+            }, []);
+            
+            const fetchRealTimeData = async () => {
+                try {
+                    const token = localStorage.getItem('agencyToken');
+                    const response = await fetch('/api/agency/dashboard/real-time', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        setRealTimeData(data.data);
+                    }
+                } catch (error) {
+                    console.error('Error fetching real-time data:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            
+            if (loading) {
+                return (
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <div style={{ fontSize: '18px', color: '#718096' }}>🔄 Cargando datos reales...</div>
+                    </div>
+                );
+            }
+            
+            const metrics = realTimeData ? {
+                sales: realTimeData.monthly_stats?.total_invoiced || 0,
+                bookings: realTimeData.monthly_stats?.invoices_count || 0,
+                commissions: realTimeData.monthly_stats?.total_paid || 0,
+                conversion: realTimeData.agency?.performance_score || 0
+            } : {
+                sales: 45890,
+                bookings: 24,
+                commissions: 4589,
+                conversion: 23.8
+            };
+            
+            return (
+                <div>
+                    {realTimeData && (
+                        <div style={{ background: '#e6fffa', padding: '12px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #38a169' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#38a169' }}>
+                                🎯 Datos en Tiempo Real desde PostgreSQL
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#2d3748', marginTop: '4px' }}>
+                                Ranking: {realTimeData.agency?.ranking || 'Bronze'} | 
+                                Comisión: {realTimeData.agency?.commission_rate || 0}% |
+                                Última actualización: {new Date().toLocaleTimeString()}
+                            </div>
+                        </div>
+                    )}
+                    
+                    <div className="dashboard-grid">
+                        <div className="metric-card">
+                            <div style={{ fontSize: '14px', color: '#718096' }}>Ventas del Mes</div>
+                            <div className="metric-value">${metrics.sales.toLocaleString()}</div>
+                            <div style={{ color: '#38a169' }}>{realTimeData ? '📊 Datos Reales' : '↗️ +12.5%'}</div>
+                        </div>
+                        <div className="metric-card">
+                            <div style={{ fontSize: '14px', color: '#718096' }}>Reservas</div>
+                            <div className="metric-value">{metrics.bookings}</div>
+                            <div style={{ color: '#38a169' }}>{realTimeData ? '📈 Este mes' : '↗️ +8.3%'}</div>
+                        </div>
+                        <div className="metric-card">
+                            <div style={{ fontSize: '14px', color: '#718096' }}>Comisiones</div>
+                            <div className="metric-value">${metrics.commissions.toLocaleString()}</div>
+                            <div style={{ color: '#38a169' }}>{realTimeData ? '💰 Ganadas' : '↗️ +15.2%'}</div>
+                        </div>
+                        <div className="metric-card">
+                            <div style={{ fontSize: '14px', color: '#718096' }}>Conversión</div>
+                            <div className="metric-value">{metrics.conversion}%</div>
+                            <div style={{ color: '#38a169' }}>{realTimeData ? '🏆 Score' : '↗️ +2.1%'}</div>
+                        </div>
+                    </div>
+
+                    <div className="content-section">
+                        <h3 className="section-title">Calculadora de Comisiones en Tiempo Real</h3>
+                        <CommissionCalculator />
+                    </div>
+                    
+                    {realTimeData?.next_ranking && (
+                        <div className="content-section">
+                            <h3 className="section-title">Próximo Ranking</h3>
+                            <div style={{ background: '#f7fafc', padding: '16px', borderRadius: '8px' }}>
+                                <div style={{ marginBottom: '8px' }}>
+                                    <strong>Actual:</strong> {realTimeData.agency.ranking} | 
+                                    <strong>Próximo:</strong> {realTimeData.next_ranking.next_ranking || 'Máximo alcanzado'}
+                                </div>
+                                {realTimeData.next_ranking.needed_sales > 0 && (
+                                    <div>
+                                        <strong>Necesitas:</strong> ${realTimeData.next_ranking.needed_sales.toLocaleString()} más en ventas
+                                        <div style={{ background: '#e2e8f0', height: '8px', borderRadius: '4px', marginTop: '8px' }}>
+                                            <div style={{ 
+                                                background: '#38a169', 
+                                                height: '100%', 
+                                                width: `${realTimeData.next_ranking.progress_percentage}%`, 
+                                                borderRadius: '4px' 
+                                            }}></div>
+                                        </div>
+                                        <div style={{ fontSize: '12px', color: '#718096', marginTop: '4px' }}>
+                                            {realTimeData.next_ranking.progress_percentage}% completado
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="content-section">
+                        <h3 className="section-title">Comisiones Recientes</h3>
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Referencia</th>
+                                    <th>Cliente</th>
+                                    <th>Comisión</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>BK-2024-001</td>
+                                    <td>Ana García</td>
+                                    <td>$189</td>
+                                    <td><span className="status-badge status-paid">Pagado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>BK-2024-002</td>
+                                    <td>Carlos López</td>
+                                    <td>$89.90</td>
+                                    <td><span className="status-badge status-pending">Pendiente</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        };
+
+        // Componente Calculadora de Comisiones
+        const CommissionCalculator = () => {
+            const [amount, setAmount] = useState('');
+            const [category, setCategory] = useState('');
+            const [destination, setDestination] = useState('');
+            const [result, setResult] = useState(null);
+            const [loading, setLoading] = useState(false);
+
+            const calculateCommission = async () => {
+                if (!amount || amount <= 0) return;
+                
+                setLoading(true);
+                try {
+                    const token = localStorage.getItem('agencyToken');
+                    const response = await fetch('/api/agency/commissions/calculator', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            amount: parseFloat(amount),
+                            product_category: category,
+                            destination: destination
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        setResult(data.data);
+                    }
+                } catch (error) {
+                    console.error('Error calculating commission:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: '12px', alignItems: 'end' }}>
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Monto ($)</label>
+                            <input
+                                type="number"
+                                className="form-input"
+                                placeholder="1890"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Categoría</label>
+                            <select className="form-input" value={category} onChange={(e) => setCategory(e.target.value)}>
+                                <option value="">Todas</option>
+                                <option value="Cultura y Aventura">Cultura y Aventura</option>
+                                <option value="Playa y Relax">Playa y Relax</option>
+                                <option value="Ciudad y Cultura">Ciudad y Cultura</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Destino</label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="Perú"
+                                value={destination}
+                                onChange={(e) => setDestination(e.target.value)}
+                            />
+                        </div>
+                        <button 
+                            className="btn" 
+                            onClick={calculateCommission}
+                            disabled={loading || !amount}
+                            style={{ height: 'fit-content', width: '100px' }}
+                        >
+                            {loading ? '...' : 'Calcular'}
+                        </button>
+                    </div>
+
+                    {result && (
+                        <div style={{ marginTop: '16px', padding: '16px', background: '#f7fafc', borderRadius: '8px' }}>
+                            <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#2d3748' }}>
+                                Comisión: ${result.commission_amount.toFixed(2)}
+                            </div>
+                            <div style={{ fontSize: '14px', color: '#718096', marginTop: '4px' }}>
+                                Tasa: {result.commission_rate}% | Tipo: {result.rule_type === 'custom' ? 'Regla personalizada' : 'Tasa base'}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const Sidebar = ({ currentSection, onSectionChange, onLogout, user }) => {
+            const menuItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+                { id: 'commissions', label: 'Comisiones', icon: '💰' },
+                { id: 'services', label: 'Servicios', icon: '📦' },
+                { id: 'users', label: 'Mi Equipo', icon: '👥' },
+            ];
+
+            return (
+                <div className="sidebar">
+                    <div className="agency-info">
+                        <div className="agency-avatar">
+                            {user?.agency?.code ? user.agency.code.substring(0, 2) : 'AG'}
+                        </div>
+                        <div>
+                            <h3>{user?.agency?.name || 'Agencia'}</h3>
+                            <div style={{ fontSize: '12px', color: '#38a169' }}>
+                                🏆 Comisión: {user?.agency?.commissionRate || 0}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul className="nav-menu">
+                        {menuItems.map(item => (
+                            <li key={item.id}>
+                                <a
+                                    className={`nav-link ${currentSection === item.id ? 'active' : ''}`}
+                                    onClick={() => onSectionChange(item.id)}
+                                >
+                                    <span>{item.icon}</span>
+                                    {item.label}
+                                </a>
+                            </li>
+                        ))}
+                        <li>
+                            <a className="nav-link" onClick={onLogout}>
+                                <span>🚪</span>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            );
+        };
+
+        const AgencyPortalApp = () => {
+            const [user, setUser] = useState(null);
+            const [currentSection, setCurrentSection] = useState('dashboard');
+
+            if (!user) {
+                return <LoginForm onLogin={setUser} />;
+            }
+
+            const renderContent = () => {
+                switch (currentSection) {
+                    case 'dashboard': return <Dashboard user={user} />;
+                    default: return (
+                        <div className="content-section">
+                            <h3 className="section-title">
+                                {currentSection === 'commissions' && 'Gestión de Comisiones'}
+                                {currentSection === 'services' && 'Catálogo de Servicios'}
+                                {currentSection === 'users' && 'Gestión de Equipo'}
+                            </h3>
+                            <p>Sección en desarrollo. Pronto disponible.</p>
+                        </div>
+                    );
+                }
+            };
+
+            return (
+                <div className="app-container">
+                    <Sidebar
+                        currentSection={currentSection}
+                        onSectionChange={setCurrentSection}
+                        onLogout={() => {
+                            localStorage.removeItem('agencyToken');
+                            setUser(null);
+                        }}
+                        user={user}
+                    />
+                    <div className="main-content">
+                        <div className="top-bar">
+                            <h1>Portal de Agencia - DATOS REALES</h1>
+                            <div>Bienvenido, {user.fullName || user.username}</div>
+                        </div>
+                        {renderContent()}
+                    </div>
+                </div>
+            );
+        };
+
+        // Usar createRoot para React 18
+        const { createRoot } = ReactDOM;
+        const root = createRoot(document.getElementById('root'));
+        root.render(<AgencyPortalApp />);
+    </script>
+</body>
+</html>

@@ -88,7 +88,8 @@ class InterTravelAPI {
   private lastRequestTime: Map<string, number> = new Map();
 
   constructor() {
-    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+    // ✅ CORREGIDO: Backend en puerto 3002
+    this.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
     
     // 🔐 Configuración de seguridad
     this.securityConfig = {

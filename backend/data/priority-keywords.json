@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "keyword": "charter",
+    "priority": 1,
+    "category": "transport",
+    "description": "Vuelos charter prioritarios - búsquedas premium",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 2,
+    "keyword": "perú",
+    "priority": 1,
+    "category": "destination",
+    "description": "Destino Perú - Machu Picchu y Cusco prioritarios",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 3,
+    "keyword": "MSC",
+    "priority": 2,
+    "category": "cruise",
+    "description": "Cruceros MSC - línea premium",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 4,
+    "keyword": "intertravel",
+    "priority": 1,
+    "category": "agency",
+    "description": "Paquetes propios InterTravel Group",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 5,
+    "keyword": "premium",
+    "priority": 3,
+    "category": "category",
+    "description": "Categoría premium - experiencias VIP",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 6,
+    "keyword": "mendoza",
+    "priority": 2,
+    "category": "destination",
+    "description": "Destino local Mendoza - tours de vino",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 7,
+    "keyword": "europa",
+    "priority": 2,
+    "category": "destination",
+    "description": "Destinos europeos - París, Roma, Madrid",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 8,
+    "keyword": "asia",
+    "priority": 3,
+    "category": "destination",
+    "description": "Destinos asiáticos - Japón, Tailandia, China",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 9,
+    "keyword": "todo incluido",
+    "priority": 2,
+    "category": "category",
+    "description": "Paquetes todo incluido - sin preocupaciones",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  },
+  {
+    "id": 10,
+    "keyword": "luna de miel",
+    "priority": 1,
+    "category": "experience",
+    "description": "Paquetes románticos - experiencias únicas",
+    "active": true,
+    "created_at": "2025-07-16T11:30:00Z"
+  }
+]

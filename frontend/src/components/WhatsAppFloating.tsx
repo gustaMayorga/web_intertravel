@@ -38,7 +38,8 @@ export default function WhatsAppFloating({
 
   const loadAdminConfig = async () => {
     try {
-      const response = await fetch('/api/admin/whatsapp-config');
+      // Cambiar puerto para hacer la llamada al backend correcto
+      const response = await fetch('http://localhost:3002/api/admin/whatsapp-config');
       if (response.ok) {
         const config = await response.json();
         if (config.success) {
@@ -51,7 +52,8 @@ export default function WhatsAppFloating({
         }
       }
     } catch (error) {
-      console.log('Usando configuración por defecto de WhatsApp');
+      // Silenciar error y usar configuración por defecto
+      // console.log('Usando configuración por defecto de WhatsApp');
     }
   };
 

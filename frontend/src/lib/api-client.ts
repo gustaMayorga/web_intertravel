@@ -7,7 +7,7 @@
  * ✅ Fallback data para desarrollo
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
 
 class ApiClient {
   private baseUrl: string;
@@ -137,6 +137,14 @@ class ApiClient {
 
   async getBooking(id: string) {
     return await this.request(`/admin/bookings/${id}`);
+  }
+
+  async getUserBookings() {
+    return await this.request('/app/user/bookings');
+  }
+
+  async getUserBookingDetails(id: string) {
+    return await this.request(`/app/user/bookings/${id}`);
   }
 
   // Reports methods

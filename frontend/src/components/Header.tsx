@@ -118,8 +118,8 @@ export default function Header() {
             </Link>
             
             {/* Portal de Agencias */}
-            <Link 
-              href="/agency/login" 
+            <a 
+              href="https://intertravelgroup.paquetedinamico.com/home?tripId=4" 
               className="relative font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
             >
               <span className="relative z-10 flex items-center gap-2">
@@ -128,7 +128,7 @@ export default function Header() {
                 </svg>
                 Agencias
               </span>
-            </Link>
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -205,11 +205,11 @@ export default function Header() {
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/>
                   </svg>
-                  RIDE - Egresados
+                  RIDE - Quinceañeras y Familias
                 </Link>
                 
-                <Link 
-                  href="/agency/login" 
+                <a 
+                  href="https://intertravelgroup.paquetedinamico.com/home?tripId=4" 
                   className="bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-4 px-6 rounded-xl text-center hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg flex items-center justify-center gap-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -217,7 +217,7 @@ export default function Header() {
                     <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
                   </svg>
                   Portal Agencias
-                </Link>
+                </a>
               </div>
             </nav>
           </div>

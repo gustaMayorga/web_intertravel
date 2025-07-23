@@ -1,0 +1,69 @@
+require('dotenv').config(); 
+const express = require('express'); 
+const cors = require('cors'); 
+const app = express(); 
+ 
+// CORS y middleware basico 
+app.use(cors({ origin: ['http://localhost:3009', 'http://localhost:3000'], credentials: true })); 
+app.use(express.json()); 
+ 
+// Logging 
+app.use((req, res, next) => { 
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`); 
+  next(); 
+}); 
+ 
+// Cargar rutas de emergencia 
+try { 
+  const emergencyRoutes = require('./emergency-app-client'); 
+  app.use('/api/app', emergencyRoutes); 
+  console.log('✅ Rutas de emergencia cargadas en /api/app'); 
+} catch (error) { 
+  console.error('❌ Error cargando rutas de emergencia:', error.message); 
+}
+
+// Limpiar cache y cargar rutas ADMIN de emergencia 
+try { 
+  // Limpiar cache de Node.js
+  delete require.cache[require.resolve('./emergency-admin')];
+  const adminRoutes = require('./emergency-admin'); 
+  app.use('/api/admin', adminRoutes); 
+  console.log('✅ Rutas ADMIN de emergencia cargadas en /api/admin'); 
+  console.log('🔄 Cache limpiado - Nuevas rutas aplicadas'); 
+} catch (error) { 
+  console.error('❌ Error cargando rutas ADMIN:', error.message); 
+}
+
+// Cargar rutas de VINCULACIÓN DNI (nuevas funcionalidades)
+try {
+  const vinculacionAppRoutes = require('./routes/app-client-vinculacion');
+  app.use('/api/app', vinculacionAppRoutes);
+  console.log('✅ Rutas de vinculación APP_CLIENT cargadas');
+  
+  const vinculacionAdminRoutes = require('./routes/admin-vinculacion');
+  app.use('/api/admin', vinculacionAdminRoutes);
+  console.log('✅ Rutas de vinculación ADMIN cargadas');
+} catch (error) {
+  console.error('❌ Error cargando rutas de vinculación:', error.message);
+  console.log('🔄 Continuando con rutas de emergencia solamente');
+}
+ 
+// 404 handler 
+app.use('/api/*', (req, res) => { 
+  console.log(`❌ Endpoint no encontrado: ${req.method} ${req.path}`); 
+  res.status(404).json({ success: false, error: 'Endpoint no encontrado', path: req.path }); 
+}); 
+ 
+// Root handler 
+app.get('*', (req, res) => { 
+  res.json({ message: 'Emergency InterTravel Server', status: 'active', endpoints: { health: '/api/app/health', register: '/api/app/auth/register' } }); 
+}); 
+ 
+// Start server 
+app.listen(3002, () => { 
+  console.log('🚨 EMERGENCY SERVER - Puerto 3002'); 
+  console.log('🌐 Health: http://localhost:3002/api/app/health'); 
+  console.log('📱 Register: http://localhost:3002/api/app/auth/register'); 
+  console.log('👥 Admin Users: http://localhost:3002/api/admin/users'); 
+  console.log('🌍 Admin Destinations: http://localhost:3002/api/admin/destinations'); 
+}); 

@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Eye, EyeOff, ArrowLeft, Check } from 'lucide-react';
+import { registerUser } from '@/lib/api-config';
+import { trackUserRegistration } from '@/lib/google-analytics';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -18,6 +20,7 @@ export default function RegisterPage() {
     phone: '',
     password: '',
     confirmPassword: '',
+    documentNumber: '', // NUEVO CAMPO DNI
     acceptTerms: false
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
@@ -44,6 +47,12 @@ export default function RegisterPage() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = 'El teléfono es requerido';
+    }
+
+    if (!formData.documentNumber.trim()) {
+      newErrors.documentNumber = 'El DNI es requerido';
+    } else if (!/^\d{7,8}$/.test(formData.documentNumber)) {
+      newErrors.documentNumber = 'DNI debe tener 7 u 8 dígitos';
     }
 
     if (!formData.password) {
@@ -76,26 +85,28 @@ export default function RegisterPage() {
     setErrors({});
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password
-        }),
+      const data = await registerUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password
       });
 
-      const data = await response.json();
-
       if (data.success) {
-        // Guardar token
+        // Guardar tokens
         localStorage.setItem('authToken', data.token);
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
         localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Trackear registro exitoso
+        trackUserRegistration({
+          userId: data.user.id.toString(),
+          email: data.user.email,
+          registrationMethod: 'email'
+        });
         
         // Redirigir al dashboard
         router.push('/account/dashboard');

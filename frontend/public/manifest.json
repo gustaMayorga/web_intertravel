@@ -1,21 +1,55 @@
 {
-  "name": "InterTravel Group",
+  "name": "InterTravel Group | Tour Operador Premium",
   "short_name": "InterTravel",
-  "description": "Tour Operador Mayorista EVyT 15.566",
+  "description": "Tour Operador Mayorista con +15 años de experiencia. Paquetes premium a destinos únicos.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#121c2e",
-  "theme_color": "#121c2e",
+  "background_color": "#ffffff",
+  "theme_color": "#16213e",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/FAVICON_INTER/Favicon 72px.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/FAVICON_INTER/Favicon 96px.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/FAVICON_INTER/Favicon 128px.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/FAVICON_INTER/Favicon 144px.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/FAVICON_INTER/Favicon 152px.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/FAVICON_INTER/Favicon 192px.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png", 
+      "src": "/FAVICON_INTER/Favicon 384px.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/FAVICON_INTER/Favicon 512px.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "categories": ["travel", "tourism", "business"],
+  "lang": "es",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
 }

@@ -32,7 +32,7 @@ export default function SupportPage() {
         sender: 'support', 
         timestamp: new Date(),
         avatar: 'https://placehold.co/40x40.png?text=S', // Placeholder for support agent
-        userName: 'Soporte ViajeroHub'
+        userName: 'Soporte Gaia'
       }
     ]);
   }, []);
@@ -71,7 +71,7 @@ export default function SupportPage() {
         sender: 'support',
         timestamp: new Date(),
         avatar: 'https://placehold.co/40x40.png?text=S',
-        userName: 'Soporte ViajeroHub'
+        userName: 'Soporte Gaia'
       };
       setMessages(prevMessages => [...prevMessages, supportReply]);
     }, 1500);

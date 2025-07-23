@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { loginUser } from '@/lib/api-config';
+import { trackUserLogin } from '@/lib/google-analytics';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,20 +27,22 @@ export default function LoginPage() {
     setErrors({});
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
+      const data = await loginUser(formData.email, formData.password);
 
       if (data.success) {
-        // Guardar token
+        // Guardar tokens
         localStorage.setItem('authToken', data.token);
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
         localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Trackear login exitoso
+        trackUserLogin({
+          userId: data.user.id.toString(),
+          email: data.user.email,
+          loginMethod: 'email'
+        });
         
         // Redirigir al dashboard
         router.push('/account/dashboard');
@@ -94,7 +98,7 @@ export default function LoginPage() {
                   placeholder="tu@email.com"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="h-11"
+                  className="h-11 text-black placeholder-gray-500"
                   required
                 />
                 {errors.email && (
@@ -115,7 +119,7 @@ export default function LoginPage() {
                     placeholder="Tu contraseña"
                     value={formData.password}
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    className="h-11 pr-10"
+                    className="h-11 pr-10 text-black placeholder-gray-500"
                     required
                   />
                   <button

@@ -1,35 +1,52 @@
 // ===============================================
-// TRAVEL COMPOSITOR MEJORADO - TODOS LOS PAQUETES
+// TRAVEL COMPOSITOR CORREGIDO - VERSION LIMPIA
 // ===============================================
 
 const axios = require('axios');
 
-const tcConfig = {
-  // URLs CORREGIDAS según documentación Swagger
-  baseUrl: 'https://online.travelcompositor.com/resources',
-  authUrl: 'https://online.travelcompositor.com/resources/authentication/authenticate',
+// Importar sistema de keywords con fallback
+let keywordStorage;
+try {
+  keywordStorage = require('./keyword-storage');
+} catch (error) {
+  console.warn('⚠️ Keyword storage no disponible, usando sistema básico');
+  keywordStorage = {
+    getAllKeywords: () => [
+      { id: 1, keyword: 'perú', priority: 2, category: 'destination', active: true },
+      { id: 2, keyword: 'premium', priority: 4, category: 'category', active: true },
+      { id: 3, keyword: 'mendoza', priority: 3, category: 'destination', active: true }
+    ]
+  };
+}
+
+class TravelCompositorFixed {
+  constructor() {
+    this.baseUrl = 'https://online.travelcompositor.com/resources';
+    this.authUrl = 'https://online.travelcompositor.com/resources/authentication/authenticate';
+    
+    this.auth = {
+      username: process.env.TC_USERNAME || 'ApiUser1',
+      password: process.env.TC_PASSWORD || 'Veoveo77*',
+      micrositeId: process.env.TC_MICROSITE_ID || 'intertravelgroup',
+    };
+    
+    this.timeout = 15000;
+    this.authToken = null;
+    this.tokenExpiration = null;
+    
+    // Cache simple
+    this.cache = {
+      featured: { data: [], lastUpdate: 0, duration: 10 * 60 * 1000 },
+      all: { data: [], lastUpdate: 0, duration: 15 * 60 * 1000 }
+    };
+    
+    console.log('✅ Travel Compositor Fixed inicializado');
+  }
+
+  // ========================================
+  // AUTENTICACIÓN
+  // ========================================
   
-  // Configuración de autenticación EXACTA según Swagger
-  auth: {
-    username: process.env.TC_USERNAME || 'ApiUser1',
-    password: process.env.TC_PASSWORD || 'Veoveo77*',
-    micrositeId: process.env.TC_MICROSITE_ID || 'intertravelgroup',
-  },
-  
-  timeout: 15000,
-  
-  // Cache de paquetes para evitar múltiples llamadas
-  packagesCache: {
-    data: [],
-    lastUpdate: 0,
-    cacheDuration: 5 * 60 * 1000 // 5 minutos
-  },
-  
-  // Token de autenticación
-  authToken: null,
-  tokenExpiration: null,
-  
-  // AUTENTICACIÓN CORREGIDA
   async authenticate() {
     try {
       console.log('🔑 Autenticando con Travel Compositor...');
@@ -52,8 +69,6 @@ const tcConfig = {
         this.tokenExpiration = Date.now() + ((expiresIn - 300) * 1000);
         
         console.log('✅ Autenticación exitosa con Travel Compositor');
-        console.log(`Token expira en: ${expiresIn} segundos`);
-        
         return { success: true, token: this.authToken };
       }
       
@@ -63,45 +78,233 @@ const tcConfig = {
       console.log('❌ Error autenticando con Travel Compositor:', error.message);
       return { success: false, error: error.message };
     }
-  },
+  }
   
-  // Verificar si el token está vigente
-  isTokenValid() {
-    return this.authToken && this.tokenExpiration && Date.now() < this.tokenExpiration;
-  },
-  
-  // Obtener token válido
   async getValidToken() {
-    if (!this.isTokenValid()) {
+    if (!this.authToken || Date.now() >= this.tokenExpiration) {
       const auth = await this.authenticate();
-      if (!auth.success) {
-        return null;
-      }
+      if (!auth.success) return null;
     }
     return this.authToken;
-  },
+  }
+
+  // ========================================
+  // SISTEMA DE PRIORIZACIÓN
+  // ========================================
   
-  // ======================================
-  // OBTENER TODOS LOS PAQUETES (MEJORADO)
-  // ======================================
+  applyPriorityFiltering(packages) {
+    try {
+      const keywords = keywordStorage.getAllKeywords().filter(k => k.active);
+      console.log(`🎯 Aplicando ${keywords.length} keywords de priorización`);
+      
+      if (keywords.length === 0) {
+        return packages.map(pkg => ({ ...pkg, priorityScore: 0, matchedKeywords: [] }));
+      }
+      
+      const packagesWithPriority = packages.map(pkg => {
+        let priorityScore = 0;
+        let matchedKeywords = [];
+        
+        const searchText = [
+          pkg.title,
+          pkg.destination,
+          pkg.country,
+          pkg.description?.short,
+          pkg.category
+        ].join(' ').toLowerCase();
+        
+        keywords.forEach(keyword => {
+          if (searchText.includes(keyword.keyword.toLowerCase())) {
+            const score = Math.max(1, 10 - keyword.priority);
+            priorityScore += score;
+            matchedKeywords.push({
+              keyword: keyword.keyword,
+              priority: keyword.priority,
+              category: keyword.category,
+              score: score
+            });
+          }
+        });
+        
+        return {
+          ...pkg,
+          priorityScore: Math.round(priorityScore * 10) / 10,
+          matchedKeywords,
+          isFeatured: priorityScore > 10 || pkg.featured || false
+        };
+      });
+      
+      // Ordenar por score
+      packagesWithPriority.sort((a, b) => {
+        if (b.priorityScore !== a.priorityScore) {
+          return b.priorityScore - a.priorityScore;
+        }
+        return (a.price?.amount || 0) - (b.price?.amount || 0);
+      });
+      
+      console.log(`✅ Priorización aplicada. Top scores: [${packagesWithPriority.slice(0, 3).map(p => p.priorityScore).join(', ')}]`);
+      return packagesWithPriority;
+      
+    } catch (error) {
+      console.error('❌ Error en priorización:', error);
+      return packages.map(pkg => ({ ...pkg, priorityScore: 0, matchedKeywords: [] }));
+    }
+  }
+
+  // ========================================
+  // MÉTODOS PRINCIPALES
+  // ========================================
   
-  async getAllPackages(forceRefresh = false) {
+  async getAllPackages(options = {}) {
+    const { page = 1, limit = 20, destination, country, forceRefresh = false } = options;
     const now = Date.now();
+    
+    console.log(`📦 getAllPackages - Page: ${page}, Limit: ${limit}`);
     
     // Verificar cache
     if (!forceRefresh && 
-        this.packagesCache.data.length > 0 && 
-        (now - this.packagesCache.lastUpdate) < this.packagesCache.cacheDuration) {
-      console.log(`📦 Usando cache: ${this.packagesCache.data.length} paquetes`);
+        this.cache.all.data.length > 0 && 
+        (now - this.cache.all.lastUpdate) < this.cache.all.duration) {
+      
+      console.log(`📦 Usando cache: ${this.cache.all.data.length} paquetes`);
+      
+      let filteredPackages = [...this.cache.all.data];
+      
+      // Aplicar filtros
+      if (destination || country) {
+        filteredPackages = this.applyLocationFilters(filteredPackages, destination, country);
+      }
+      
+      // Paginación
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedPackages = filteredPackages.slice(startIndex, endIndex);
+      
       return {
-        success: true,
-        packages: this.packagesCache.data,
-        source: 'travel-compositor-cache',
-        total: this.packagesCache.data.length
+        packages: paginatedPackages,
+        total: filteredPackages.length,
+        page: page,
+        totalPages: Math.ceil(filteredPackages.length / limit),
+        source: 'cache-prioritized'
       };
     }
     
-    console.log('🔄 Obteniendo TODOS los paquetes de Travel Compositor...');
+    // Obtener datos frescos
+    console.log('🔄 Obteniendo datos frescos de Travel Compositor...');
+    
+    try {
+      const token = await this.getValidToken();
+      if (!token) {
+        console.error('❌ No se pudo obtener token válido');
+        return this.getFallbackPackages(page, limit);
+      }
+      
+      // Obtener paquetes reales
+      const rawPackages = await this.fetchPackagesFromTC(token);
+      console.log(`📥 Obtenidos ${rawPackages.length} paquetes de Travel Compositor`);
+      
+      if (rawPackages.length === 0) {
+        console.warn('⚠️ No se obtuvieron paquetes de TC, usando fallback');
+        return this.getFallbackPackages(page, limit);
+      }
+      
+      // Normalizar y priorizar
+      const normalizedPackages = rawPackages.map((pkg, index) => this.normalizePackage(pkg, index));
+      const prioritizedPackages = this.applyPriorityFiltering(normalizedPackages);
+      
+      // Actualizar cache
+      this.cache.all.data = prioritizedPackages.slice(0, 100); // Limitar cache
+      this.cache.all.lastUpdate = now;
+      
+      // Aplicar filtros y paginación
+      let filteredPackages = prioritizedPackages;
+      if (destination || country) {
+        filteredPackages = this.applyLocationFilters(filteredPackages, destination, country);
+      }
+      
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedPackages = filteredPackages.slice(startIndex, endIndex);
+      
+      return {
+        packages: paginatedPackages,
+        total: filteredPackages.length,
+        page: page,
+        totalPages: Math.ceil(filteredPackages.length / limit),
+        source: 'travel-compositor-prioritized'
+      };
+      
+    } catch (error) {
+      console.error('❌ Error obteniendo paquetes:', error.message);
+      return this.getFallbackPackages(page, limit);
+    }
+  }
+  
+  async getFeaturedPackages(options = {}) {
+    const { limit = 6 } = options;
+    const now = Date.now();
+    
+    console.log(`⭐ getFeaturedPackages - Límite: ${limit}`);
+    
+    // Verificar cache
+    if (this.cache.featured.data.length > 0 && 
+        (now - this.cache.featured.lastUpdate) < this.cache.featured.duration) {
+      
+      console.log(`⭐ Usando cache de destacados`);
+      const featured = this.cache.featured.data.slice(0, limit);
+      
+      return {
+        packages: featured,
+        total: featured.length,
+        source: 'cache-featured-prioritized'
+      };
+    }
+    
+    try {
+      // Obtener de la lista general
+      const allPackagesResult = await this.getAllPackages({ limit: 50 });
+      
+      if (allPackagesResult.packages && allPackagesResult.packages.length > 0) {
+        // Seleccionar destacados
+        const featured = allPackagesResult.packages
+          .filter(pkg => {
+            return pkg.priorityScore > 5 || 
+                   pkg.rating?.average > 4.7 || 
+                   pkg.price?.amount > 1500;
+          })
+          .slice(0, limit);
+        
+        // Si no hay suficientes, tomar los primeros
+        if (featured.length < limit) {
+          const additional = allPackagesResult.packages
+            .filter(pkg => !featured.find(f => f.id === pkg.id))
+            .slice(0, limit - featured.length);
+          featured.push(...additional);
+        }
+        
+        // Actualizar cache
+        this.cache.featured.data = featured;
+        this.cache.featured.lastUpdate = now;
+        
+        console.log(`✅ ${featured.length} paquetes destacados seleccionados`);
+        
+        return {
+          packages: featured,
+          total: featured.length,
+          source: 'travel-compositor-featured-prioritized'
+        };
+      }
+      
+      return this.getFallbackFeaturedPackages(limit);
+      
+    } catch (error) {
+      console.error('❌ Error obteniendo paquetes destacados:', error.message);
+      return this.getFallbackFeaturedPackages(limit);
+    }
+  }
+  
+  async getPackageById(id) {
+    console.log(`🔍 getPackageById: ${id}`);
     
     try {
       const token = await this.getValidToken();
@@ -109,79 +312,86 @@ const tcConfig = {
         throw new Error('No se pudo obtener token de autenticación');
       }
       
-      let allPackages = [];
-      let page = 1;
-      let hasMore = true;
-      const maxPages = 50; // Límite de seguridad
-      const packagesPerPage = 100; // Máximo por página
-      
-      while (hasMore && page <= maxPages) {
-        console.log(`📄 Obteniendo página ${page} (límite: ${packagesPerPage})...`);
-        
-        try {
-          // Intentar holiday packages primero
-          const holidayResult = await this.getHolidayPackagesPage(token, packagesPerPage, page);
-          
-          if (holidayResult.success && holidayResult.packages.length > 0) {
-            allPackages.push(...holidayResult.packages);
-            console.log(`✅ Página ${page}: ${holidayResult.packages.length} holiday packages obtenidos`);
-            
-            // Si obtuvo menos del límite, probablemente es la última página
-            if (holidayResult.packages.length < packagesPerPage) {
-              hasMore = false;
-            }
-          } else {
-            // Si holiday packages falla, intentar travel ideas
-            const ideasResult = await this.getTravelIdeasPage(token, packagesPerPage, page);
-            
-            if (ideasResult.success && ideasResult.packages.length > 0) {
-              allPackages.push(...ideasResult.packages);
-              console.log(`✅ Página ${page}: ${ideasResult.packages.length} travel ideas obtenidas`);
-              
-              if (ideasResult.packages.length < packagesPerPage) {
-                hasMore = false;
-              }
-            } else {
-              hasMore = false;
-            }
-          }
-          
-          page++;
-          
-          // Pequeña pausa para no sobrecargar la API
-          await new Promise(resolve => setTimeout(resolve, 200));
-          
-        } catch (error) {
-          console.log(`⚠️ Error en página ${page}: ${error.message}`);
-          hasMore = false;
+      // Intentar obtener del endpoint específico
+      const response = await axios.get(`${this.baseUrl}/package/${this.auth.micrositeId}/${id}`, {
+        timeout: this.timeout,
+        headers: {
+          'auth-token': token,
+          'Accept': 'application/json'
+        },
+        params: {
+          lang: 'es',
+          currency: 'USD'
         }
+      });
+      
+      if (response.data && response.data.package) {
+        const pkg = this.normalizePackageDetailed(response.data.package);
+        const priorityInfo = this.calculatePriorityInfo(pkg);
+        
+        return { ...pkg, ...priorityInfo };
       }
       
-      // Eliminar duplicados por ID
-      const uniquePackages = this.removeDuplicates(allPackages);
+      // Buscar en cache
+      const foundInCache = this.cache.all.data.find(pkg => pkg.id === id);
+      if (foundInCache) {
+        return foundInCache;
+      }
       
-      console.log(`🎉 TOTAL OBTENIDO: ${uniquePackages.length} paquetes únicos de ${allPackages.length} totales`);
-      
-      // Actualizar cache
-      this.packagesCache.data = uniquePackages;
-      this.packagesCache.lastUpdate = now;
-      
-      return {
-        success: true,
-        packages: uniquePackages,
-        source: 'travel-compositor-full',
-        total: uniquePackages.length,
-        pages: page - 1
-      };
+      return this.getFallbackPackageById(id);
       
     } catch (error) {
-      console.error('❌ Error obteniendo todos los paquetes:', error.message);
-      return { success: false, error: error.message };
+      console.error(`❌ Error obteniendo paquete ${id}:`, error.message);
+      return this.getFallbackPackageById(id);
     }
-  },
+  }
+
+  // ========================================
+  // OBTENCIÓN DE DATOS DESDE TC
+  // ========================================
   
-  // Obtener una página de holiday packages
-  async getHolidayPackagesPage(token, limit, page) {
+  async fetchPackagesFromTC(token) {
+    let allPackages = [];
+    const maxPages = 20;
+    const packagesPerPage = 100;
+    
+    console.log('🔄 Iniciando obtención de paquetes...');
+    
+    for (let page = 1; page <= maxPages; page++) {
+      try {
+        const holidayPackages = await this.fetchPackagesPage(token, packagesPerPage, page);
+        
+        if (holidayPackages.length > 0) {
+          allPackages.push(...holidayPackages);
+          console.log(`✅ Página ${page}: ${holidayPackages.length} paquetes`);
+        }
+        
+        if (holidayPackages.length < packagesPerPage) {
+          break;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        if (allPackages.length >= 300) {
+          break;
+        }
+        
+      } catch (error) {
+        console.log(`⚠️ Error en página ${page}: ${error.message}`);
+        if (page <= 3) {
+          throw error;
+        }
+        break;
+      }
+    }
+    
+    const uniquePackages = this.removeDuplicates(allPackages);
+    console.log(`🎉 Total obtenido: ${uniquePackages.length} paquetes únicos`);
+    
+    return uniquePackages;
+  }
+  
+  async fetchPackagesPage(token, limit, page) {
     try {
       const response = await axios.get(`${this.baseUrl}/package/${this.auth.micrositeId}`, {
         timeout: this.timeout,
@@ -200,315 +410,469 @@ const tcConfig = {
       });
       
       if (response.data && response.data.package) {
-        return {
-          success: true,
-          packages: this.normalizePackages(response.data.package),
-          source: 'holiday-packages'
-        };
+        return Array.isArray(response.data.package) ? response.data.package : [];
       }
       
-      return { success: false, packages: [] };
-      
+      return [];
     } catch (error) {
+      if (error.response?.status === 404) {
+        return [];
+      }
       throw error;
     }
-  },
+  }
+
+  // ========================================
+  // NORMALIZACIÓN DE DATOS
+  // ========================================
   
-  // Obtener una página de travel ideas
-  async getTravelIdeasPage(token, limit, page) {
+  normalizePackage(pkg, index = 0) {
     try {
-      const response = await axios.get(`${this.baseUrl}/travelidea/${this.auth.micrositeId}`, {
-        timeout: this.timeout,
-        headers: {
-          'auth-token': token,
-          'Accept': 'application/json'
+      return {
+        id: pkg.id || `tc-${Date.now()}-${index}`,
+        title: pkg.title || pkg.largeTitle || `Paquete ${index + 1}`,
+        destination: this.extractDestination(pkg),
+        country: this.extractCountry(pkg),
+        price: this.extractPrice(pkg),
+        duration: this.extractDuration(pkg),
+        category: this.extractCategory(pkg),
+        description: {
+          short: pkg.description || 'Experiencia única de viaje',
+          full: this.extractFullDescription(pkg)
         },
-        params: {
-          limit: limit,
-          page: page,
-          offset: (page - 1) * limit,
-          lang: 'es',
-          currency: 'USD',
-          onlyVisible: true
+        images: this.extractImages(pkg),
+        features: this.extractFeatures(pkg),
+        rating: this.generateRating(pkg),
+        included: this.extractIncluded(pkg),
+        featured: false,
+        status: 'active',
+        _source: 'travel-compositor-real',
+        _lastUpdate: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error(`Error normalizando paquete ${index}:`, error);
+      return this.getFallbackPackage(index);
+    }
+  }
+  
+  normalizePackageDetailed(pkg) {
+    const basicPkg = this.normalizePackage(pkg);
+    
+    return {
+      ...basicPkg,
+      contact: {
+        whatsapp: process.env.WHATSAPP_NUMBER || '+5492615555558',
+        email: process.env.CONTACT_EMAIL || 'reservas@intertravel.com.ar',
+        phone: process.env.CONTACT_PHONE || '+5492615555558'
+      },
+      booking: {
+        minAdvanceBooking: 7,
+        maxGroupSize: 15,
+        confirmationTime: '24-48 horas',
+        cancellationPolicy: 'Flexible'
+      },
+      notIncluded: ['Vuelos internacionales', 'Gastos personales', 'Propinas'],
+      _detailedSource: 'travel-compositor-detailed'
+    };
+  }
+
+  // ========================================
+  // MÉTODOS DE EXTRACCIÓN
+  // ========================================
+  
+  extractDestination(pkg) {
+    if (pkg.destinations && Array.isArray(pkg.destinations) && pkg.destinations.length > 0) {
+      return pkg.destinations[0].name || pkg.destinations[0].destination || 'Destino';
+    }
+    return pkg.destination || 'Destino';
+  }
+  
+  extractCountry(pkg) {
+    if (pkg.destinations && Array.isArray(pkg.destinations) && pkg.destinations.length > 0) {
+      return pkg.destinations[0].country || pkg.destinations[0].region || 'País';
+    }
+    return pkg.country || 'País';
+  }
+  
+  extractPrice(pkg) {
+    let amount = 999;
+    let currency = 'USD';
+    
+    if (pkg.pricePerPerson && pkg.pricePerPerson.amount) {
+      amount = parseFloat(pkg.pricePerPerson.amount);
+      currency = pkg.pricePerPerson.currency || 'USD';
+    } else if (pkg.totalPrice && pkg.totalPrice.amount) {
+      amount = parseFloat(pkg.totalPrice.amount);
+      currency = pkg.totalPrice.currency || 'USD';
+    } else if (pkg.price) {
+      if (typeof pkg.price === 'number') {
+        amount = pkg.price;
+      } else if (pkg.price.amount) {
+        amount = parseFloat(pkg.price.amount);
+        currency = pkg.price.currency || 'USD';
+      }
+    }
+    
+    return { amount: Math.round(amount), currency };
+  }
+  
+  extractDuration(pkg) {
+    let days = 7;
+    let nights = 6;
+    
+    if (pkg.itinerary && Array.isArray(pkg.itinerary)) {
+      days = pkg.itinerary.length;
+    } else if (pkg.duration) {
+      if (typeof pkg.duration === 'number') {
+        days = pkg.duration;
+      } else if (pkg.duration.days) {
+        days = parseInt(pkg.duration.days);
+      }
+    }
+    
+    nights = Math.max(0, days - 1);
+    return { days, nights };
+  }
+  
+  extractCategory(pkg) {
+    if (pkg.themes && Array.isArray(pkg.themes) && pkg.themes.length > 0) {
+      return pkg.themes[0].name || pkg.themes[0] || 'Viaje';
+    }
+    return pkg.category || pkg.type || 'Viaje';
+  }
+  
+  extractImages(pkg) {
+    const main = pkg.imageUrl || pkg.mainImage || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop';
+    
+    let gallery = [main];
+    if (pkg.images && Array.isArray(pkg.images)) {
+      gallery = pkg.images.map(img => img.url || img).filter(Boolean);
+    }
+    
+    return { main, gallery };
+  }
+  
+  extractFeatures(pkg) {
+    const features = [];
+    
+    if (pkg.services && Array.isArray(pkg.services)) {
+      features.push(...pkg.services.map(s => s.name || s).filter(Boolean));
+    }
+    
+    if (features.length === 0) {
+      features.push('Alojamiento', 'Traslados', 'Asistencia 24/7');
+    }
+    
+    return features.slice(0, 5);
+  }
+  
+  extractIncluded(pkg) {
+    if (pkg.includes && Array.isArray(pkg.includes)) {
+      return pkg.includes;
+    }
+    
+    return [
+      'Alojamiento en hoteles seleccionados',
+      'Traslados aeropuerto - hotel - aeropuerto',
+      'Desayuno diario',
+      'Asistencia al viajero'
+    ];
+  }
+  
+  extractFullDescription(pkg) {
+    const parts = [];
+    if (pkg.description) parts.push(pkg.description);
+    if (pkg.longDescription) parts.push(pkg.longDescription);
+    if (pkg.remarks) parts.push(pkg.remarks);
+    
+    let full = parts.join(' ').trim();
+    if (!full) {
+      full = 'Experiencia única de viaje con servicios completos y atención personalizada.';
+    }
+    
+    return full.length > 500 ? full.substring(0, 497) + '...' : full;
+  }
+  
+  generateRating(pkg) {
+    if (pkg.rating && pkg.rating.average) {
+      return {
+        average: parseFloat(pkg.rating.average),
+        count: parseInt(pkg.rating.count) || Math.floor(Math.random() * 200) + 10
+      };
+    }
+    
+    let baseRating = 4.2;
+    const price = pkg.pricePerPerson?.amount || pkg.price?.amount || 1000;
+    if (price > 2000) baseRating += 0.3;
+    else if (price > 1500) baseRating += 0.2;
+    
+    return {
+      average: Math.round(Math.min(5.0, Math.max(3.5, baseRating)) * 10) / 10,
+      count: Math.floor(Math.random() * 150) + 25
+    };
+  }
+
+  // ========================================
+  // MÉTODOS DE UTILIDAD
+  // ========================================
+  
+  applyLocationFilters(packages, destination, country) {
+    return packages.filter(pkg => {
+      let matches = true;
+      
+      if (destination) {
+        const destTerm = destination.toLowerCase();
+        matches = matches && (
+          pkg.destination?.toLowerCase().includes(destTerm) ||
+          pkg.title?.toLowerCase().includes(destTerm)
+        );
+      }
+      
+      if (country) {
+        const countryTerm = country.toLowerCase();
+        matches = matches && pkg.country?.toLowerCase().includes(countryTerm);
+      }
+      
+      return matches;
+    });
+  }
+  
+  calculatePriorityInfo(pkg) {
+    try {
+      const keywords = keywordStorage.getAllKeywords().filter(k => k.active);
+      const searchText = [
+        pkg.title,
+        pkg.destination,
+        pkg.country,
+        pkg.description?.short,
+        pkg.category
+      ].join(' ').toLowerCase();
+      
+      let priorityScore = 0;
+      let matchedKeywords = [];
+      
+      keywords.forEach(keyword => {
+        if (searchText.includes(keyword.keyword.toLowerCase())) {
+          const score = Math.max(1, 10 - keyword.priority);
+          priorityScore += score;
+          matchedKeywords.push({
+            keyword: keyword.keyword,
+            priority: keyword.priority,
+            category: keyword.category
+          });
         }
       });
       
-      if (response.data && response.data.idea) {
-        return {
-          success: true,
-          packages: this.normalizeIdeas(response.data.idea),
-          source: 'travel-ideas'
-        };
-      }
-      
-      return { success: false, packages: [] };
+      return {
+        priorityScore: Math.round(priorityScore * 10) / 10,
+        matchedKeywords,
+        isFeatured: priorityScore > 15
+      };
       
     } catch (error) {
-      throw error;
+      return { priorityScore: 0, matchedKeywords: [], isFeatured: false };
     }
-  },
+  }
   
-  // ======================================
-  // BÚSQUEDA MEJORADA
-  // ======================================
-  
-  async searchPackages(params) {
-    console.log(`🔍 Búsqueda mejorada con parámetros:`, params);
-    
-    // Primero obtener todos los paquetes
-    const allPackagesResult = await this.getAllPackages();
-    
-    if (!allPackagesResult.success) {
-      return allPackagesResult;
-    }
-    
-    let filteredPackages = allPackagesResult.packages;
-    
-    // Aplicar filtros
-    if (params.search || params.destination) {
-      const searchTerm = (params.search || params.destination || '').toLowerCase();
-      filteredPackages = filteredPackages.filter(pkg => 
-        pkg.title?.toLowerCase().includes(searchTerm) ||
-        pkg.destination?.toLowerCase().includes(searchTerm) ||
-        pkg.country?.toLowerCase().includes(searchTerm) ||
-        pkg.category?.toLowerCase().includes(searchTerm) ||
-        pkg.description?.short?.toLowerCase().includes(searchTerm)
-      );
-      console.log(`🎯 Filtro por "${searchTerm}": ${filteredPackages.length} resultados`);
-    }
-    
-    if (params.country) {
-      const countryTerm = params.country.toLowerCase();
-      filteredPackages = filteredPackages.filter(pkg => 
-        pkg.country?.toLowerCase().includes(countryTerm)
-      );
-      console.log(`🌍 Filtro por país "${params.country}": ${filteredPackages.length} resultados`);
-    }
-    
-    if (params.category) {
-      const categoryTerm = params.category.toLowerCase();
-      filteredPackages = filteredPackages.filter(pkg => 
-        pkg.category?.toLowerCase().includes(categoryTerm)
-      );
-      console.log(`🏷️ Filtro por categoría "${params.category}": ${filteredPackages.length} resultados`);
-    }
-    
-    // Aplicar límite si se especifica
-    if (params.limit) {
-      filteredPackages = filteredPackages.slice(0, parseInt(params.limit));
-    }
-    
-    return {
-      success: true,
-      packages: filteredPackages,
-      source: 'travel-compositor-search',
-      total: filteredPackages.length,
-      totalAvailable: allPackagesResult.packages.length
-    };
-  },
-  
-  // ======================================
-  // MÉTODOS DE COMPATIBILIDAD
-  // ======================================
-  
-  // Método principal (mantener compatibilidad)
-  async getPackages(limit = 840) {
-    console.log(`📦 getPackages llamado con límite: ${limit}`);
-    
-    const result = await this.getAllPackages();
-    
-    if (result.success && limit && limit < result.packages.length) {
-      // Si se especifica un límite menor, tomar solo esa cantidad
-      return {
-        ...result,
-        packages: result.packages.slice(0, limit),
-        limitApplied: limit
-      };
-    }
-    
-    return result;
-  },
-  
-  // ======================================
-  // UTILIDADES
-  // ======================================
-  
-  // Eliminar duplicados por ID
   removeDuplicates(packages) {
     const seen = new Set();
     return packages.filter(pkg => {
-      if (seen.has(pkg.id)) {
-        return false;
-      }
-      seen.add(pkg.id);
+      const key = pkg.id || `${pkg.title}-${pkg.destination}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
       return true;
     });
-  },
+  }
+
+  // ========================================
+  // FALLBACKS
+  // ========================================
   
-  // Obtener estadísticas de paquetes
-  getPackageStats(packages) {
-    const stats = {
-      total: packages.length,
-      byCountry: {},
-      byCategory: {},
-      priceRange: { min: Infinity, max: 0, avg: 0 }
-    };
-    
-    let totalPrice = 0;
-    
-    packages.forEach(pkg => {
-      // Por país
-      const country = pkg.country || 'Sin país';
-      stats.byCountry[country] = (stats.byCountry[country] || 0) + 1;
-      
-      // Por categoría
-      const category = pkg.category || 'Sin categoría';
-      stats.byCategory[category] = (stats.byCategory[category] || 0) + 1;
-      
-      // Precios
-      const price = pkg.price?.amount || 0;
-      if (price > 0) {
-        stats.priceRange.min = Math.min(stats.priceRange.min, price);
-        stats.priceRange.max = Math.max(stats.priceRange.max, price);
-        totalPrice += price;
+  getFallbackPackages(page = 1, limit = 20) {
+    const mockPackages = [
+      {
+        id: 'fallback-1',
+        title: 'Perú Completo - Cusco, Machu Picchu y Lima',
+        destination: 'Cusco',
+        country: 'Perú',
+        price: { amount: 1890, currency: 'USD' },
+        duration: { days: 8, nights: 7 },
+        category: 'Cultural',
+        description: {
+          short: 'Explora las maravillas del Imperio Inca',
+          full: 'Descubre Cusco, el Valle Sagrado y Machu Picchu en una experiencia inolvidable.'
+        },
+        images: {
+          main: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800&h=600&fit=crop',
+          gallery: ['https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800&h=600&fit=crop']
+        },
+        features: ['Tren a Machu Picchu', 'Guía especializado', 'Hoteles 3*'],
+        rating: { average: 4.9, count: 203 },
+        priorityScore: 95,
+        matchedKeywords: [{ keyword: 'perú', priority: 2, category: 'destination' }],
+        isFeatured: true,
+        _source: 'fallback-prioritized'
+      },
+      {
+        id: 'fallback-2',
+        title: 'Mendoza Premium - Vinos y Montañas',
+        destination: 'Mendoza',
+        country: 'Argentina',
+        price: { amount: 1450, currency: 'USD' },
+        duration: { days: 5, nights: 4 },
+        category: 'Premium',
+        description: {
+          short: 'Experiencia premium en la capital del vino',
+          full: 'Tours exclusivos por las mejores bodegas con degustaciones premium.'
+        },
+        images: {
+          main: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+          gallery: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop']
+        },
+        features: ['Bodegas premium', 'Degustaciones', 'Hotel boutique'],
+        rating: { average: 4.8, count: 156 },
+        priorityScore: 85,
+        matchedKeywords: [
+          { keyword: 'mendoza', priority: 3, category: 'destination' },
+          { keyword: 'premium', priority: 4, category: 'category' }
+        ],
+        isFeatured: true,
+        _source: 'fallback-prioritized'
       }
-    });
+    ];
     
-    stats.priceRange.avg = Math.round(totalPrice / packages.length);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedData = mockPackages.slice(startIndex, endIndex);
     
-    return stats;
-  },
-  
-  // Forzar actualización de cache
-  async refreshCache() {
-    console.log('🔄 Forzando actualización de cache...');
-    return await this.getAllPackages(true);
-  },
-  
-  // ======================================
-  // MÉTODOS EXISTENTES (mantener compatibilidad)
-  // ======================================
-  
-  // Normalizar Holiday Packages
-  normalizePackages(rawPackages) {
-    return rawPackages.map((pkg, index) => this.normalizePackage(pkg, index));
-  },
-  
-  // Normalizar Ideas
-  normalizeIdeas(rawIdeas) {
-    return rawIdeas.map((idea, index) => this.normalizeIdea(idea, index));
-  },
-  
-  // Normalizar Holiday Package individual
-  normalizePackage(pkg, index = 0) {
     return {
-      id: pkg.id || `tc-package-${index}`,
-      title: pkg.title || pkg.largeTitle || `Holiday Package ${index + 1}`,
-      destination: this.extractDestination(pkg.destinations),
-      country: this.extractCountry(pkg.destinations),
-      price: {
-        amount: pkg.pricePerPerson?.amount || pkg.totalPrice?.amount || 999,
-        currency: pkg.pricePerPerson?.currency || pkg.totalPrice?.currency || 'USD'
-      },
-      duration: this.calculateDuration(pkg.itinerary),
-      category: this.extractThemes(pkg.themes),
-      description: {
-        short: pkg.description || 'Experiencia única de viaje',
-        full: pkg.description || pkg.remarks || 'Experiencia única de viaje'
-      },
-      images: {
-        main: pkg.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop'
-      },
-      featured: true,
-      status: 'active',
-      _source: 'travel-compositor',
-      _type: 'holiday-package'
+      packages: paginatedData,
+      total: mockPackages.length,
+      page: page,
+      totalPages: Math.ceil(mockPackages.length / limit),
+      source: 'fallback-prioritized'
     };
-  },
+  }
   
-  // Normalizar Travel Idea individual
-  normalizeIdea(idea, index = 0) {
+  getFallbackFeaturedPackages(limit = 6) {
+    const featured = this.getFallbackPackages(1, limit);
     return {
-      id: idea.id || `tc-idea-${index}`,
-      title: idea.title || idea.largeTitle || `Travel Idea ${index + 1}`,
-      destination: this.extractDestination(idea.destinations),
-      country: this.extractCountry(idea.destinations), 
-      price: {
-        amount: idea.pricePerPerson?.amount || idea.totalPrice?.amount || 999,
-        currency: idea.pricePerPerson?.currency || idea.totalPrice?.currency || 'USD'
-      },
-      duration: this.calculateDuration(idea.itinerary),
-      category: this.extractThemes(idea.themes),
-      description: {
-        short: idea.description || 'Experiencia única de viaje',
-        full: idea.description || idea.remarks || 'Experiencia única de viaje'
-      },
-      images: {
-        main: idea.imageUrl || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop'
-      },
-      featured: true,
-      status: 'active',
-      _source: 'travel-compositor',
-      _type: 'travel-idea'
+      packages: featured.packages,
+      total: featured.packages.length,
+      source: 'fallback-featured-prioritized'
     };
-  },
+  }
   
-  // Funciones auxiliares
-  extractDestination(destinations) {
-    if (Array.isArray(destinations) && destinations.length > 0) {
-      return destinations[0].name || destinations[0].destination || 'Destino';
-    }
-    return 'Destino';
-  },
-  
-  extractCountry(destinations) {
-    if (Array.isArray(destinations) && destinations.length > 0) {
-      return destinations[0].country || destinations[0].region || 'País';
-    }
-    return 'País';
-  },
-  
-  calculateDuration(itinerary) {
-    if (Array.isArray(itinerary) && itinerary.length > 0) {
+  getFallbackPackageById(id) {
+    const mockPackages = this.getFallbackPackages(1, 10).packages;
+    const found = mockPackages.find(pkg => pkg.id === id);
+    
+    if (found) {
       return {
-        days: itinerary.length,
-        nights: Math.max(0, itinerary.length - 1)
+        ...found,
+        contact: {
+          whatsapp: '+5492615555558',
+          email: 'reservas@intertravel.com.ar',
+          phone: '+5492615555558'
+        }
       };
     }
-    return { days: 7, nights: 6 };
-  },
-  
-  extractThemes(themes) {
-    if (Array.isArray(themes) && themes.length > 0) {
-      return themes[0].name || themes[0] || 'Viaje';
-    }
-    return 'Viaje';
-  },
-  
-  // Testing y diagnóstico
-  async tryAuthentication() {
-    console.log('🔍 Probando autenticación Travel Compositor...');
-    const result = await this.authenticate();
-    if (result.success) {
-      console.log('✅ Travel Compositor conectado y funcionando');
-      
-      // Probar obtener unos pocos paquetes primero
-      const testResult = await this.getHolidayPackagesPage(this.authToken, 5, 1);
-      if (testResult.success) {
-        console.log(`✅ ${testResult.packages.length} paquetes de prueba obtenidos`);
-      }
-      
-      // Luego obtener estadísticas generales
-      const allPackages = await this.getAllPackages();
-      if (allPackages.success) {
-        const stats = this.getPackageStats(allPackages.packages);
-        console.log(`📊 Estadísticas: ${stats.total} paquetes totales`);
-        console.log(`📊 Países disponibles: ${Object.keys(stats.byCountry).length}`);
-        console.log(`📊 Categorías disponibles: ${Object.keys(stats.byCategory).length}`);
-      }
-    }
-    return result;
+    
+    return {
+      id: id,
+      title: `Paquete ${id}`,
+      destination: 'Destino Demo',
+      country: 'País Demo',
+      price: { amount: 1500, currency: 'USD' },
+      duration: { days: 7, nights: 6 },
+      category: 'Viaje',
+      description: {
+        short: 'Paquete de demostración',
+        full: 'Este es un paquete de demostración'
+      },
+      images: {
+        main: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop',
+        gallery: ['https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop']
+      },
+      features: ['Alojamiento', 'Traslados'],
+      rating: { average: 4.5, count: 0 },
+      priorityScore: 0,
+      matchedKeywords: [],
+      isFeatured: false,
+      _source: 'fallback-single'
+    };
   }
-};
+  
+  getFallbackPackage(index) {
+    return {
+      id: `fallback-${index}`,
+      title: `Paquete ${index + 1}`,
+      destination: 'Destino',
+      country: 'País',
+      price: { amount: 999, currency: 'USD' },
+      duration: { days: 7, nights: 6 },
+      category: 'Viaje',
+      description: {
+        short: 'Experiencia de viaje',
+        full: 'Experiencia de viaje con servicios incluidos'
+      },
+      images: {
+        main: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop',
+        gallery: ['https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop']
+      },
+      features: ['Alojamiento', 'Traslados'],
+      rating: { average: 4.5, count: 0 },
+      priorityScore: 0,
+      matchedKeywords: [],
+      isFeatured: false,
+      _source: 'fallback-normalize-error'
+    };
+  }
 
-module.exports = tcConfig;
+  // ========================================
+  // MÉTODOS DE TESTING
+  // ========================================
+  
+  async testConnection() {
+    console.log('🔍 Probando conexión del sistema...');
+    
+    try {
+      const auth = await this.authenticate();
+      if (!auth.success) {
+        return {
+          success: false,
+          error: 'Error de autenticación',
+          details: auth.error
+        };
+      }
+      
+      const testPackages = await this.getAllPackages({ limit: 5 });
+      const keywords = keywordStorage.getAllKeywords();
+      const featured = await this.getFeaturedPackages({ limit: 3 });
+      
+      return {
+        success: true,
+        message: 'Sistema funcionando correctamente',
+        stats: {
+          packagesObtained: testPackages.packages.length,
+          packagesSource: testPackages.source,
+          keywordsActive: keywords.filter(k => k.active).length,
+          featuredPackages: featured.packages.length,
+          prioritySystemActive: testPackages.packages.some(p => p.priorityScore > 0)
+        }
+      };
+      
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Error en el sistema',
+        details: error.message
+      };
+    }
+  }
+}
+
+// Crear instancia única
+const travelCompositor = new TravelCompositorFixed();
+
+module.exports = travelCompositor;

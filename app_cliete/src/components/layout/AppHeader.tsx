@@ -11,6 +11,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { NotificationCenter } from '@/components/NotificationCenter';
 import { useAuth } from '@/contexts/auth-context';
 import { cn } from '@/lib/utils';
 
@@ -22,6 +23,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Inicio', Icon: LayoutDashboard },
+  { href: '/reservas', label: 'Mis Reservas', Icon: Package },
   { href: '/flights', label: 'Vuelos', Icon: Plane },
   { href: '/packages', label: 'Paquetes', Icon: Package },
   { href: '/details', label: 'Detalles', Icon: Info },
@@ -67,10 +69,7 @@ export default function AppHeader() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary/80">
-            <Bell className="h-5 w-5 sm:h-6 sm:w-6" />
-            <span className="sr-only">Notificaciones</span>
-          </Button>
+          <NotificationCenter />
 
           {loading ? (
             <div className="h-8 w-24 bg-primary/50 animate-pulse rounded-md"></div>

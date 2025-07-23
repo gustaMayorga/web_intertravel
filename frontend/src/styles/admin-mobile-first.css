@@ -1,0 +1,284 @@
+/**
+ * 📱 ADMIN MOBILE-FIRST RESPONSIVE - CORRECCIÓN DEFINITIVA
+ * =========================================================
+ * 
+ * ✅ MOBILE-FIRST approach obligatorio
+ * ✅ Sidebar como overlay en móvil
+ * ✅ Header móvil siempre visible
+ * ✅ Touch targets 44px mínimo
+ */
+
+/* 🎯 MOBILE-FIRST BASE - MÓVIL ES EL DEFAULT */
+[data-admin="true"] {
+  /* Variables para mobile-first */
+  --admin-sidebar-width: 16rem;
+  --admin-header-height: 64px;
+  --admin-touch-target: 44px;
+}
+
+/* 📱 MOBILE DEFAULT (0px - 1023px) */
+/* En móvil: sidebar overlay + header fijo */
+
+/* Sidebar móvil: HIDDEN por defecto, overlay cuando abierto */
+[data-admin="true"] .lg\:flex.lg\:w-64 {
+  display: none !important;
+}
+
+/* Header móvil: SIEMPRE visible */
+[data-admin="true"] .lg\:hidden {
+  display: flex !important;
+}
+
+/* Main content: SIN padding-left en móvil */
+[data-admin="true"] .lg\:pl-64 {
+  padding-left: 0 !important;
+}
+
+/* Overlay sidebar móvil: z-index alto */
+[data-admin="true"] .fixed.inset-0.z-50 {
+  z-index: 9999 !important;
+}
+
+/* Touch targets móvil */
+[data-admin="true"] button,
+[data-admin="true"] [role="button"],
+[data-admin="true"] .touch-target {
+  min-height: var(--admin-touch-target) !important;
+  min-width: var(--admin-touch-target) !important;
+  padding: 0.75rem !important;
+}
+
+/* Grids móvil: 1 columna */
+[data-admin="true"] .grid {
+  grid-template-columns: 1fr !important;
+  gap: 1rem !important;
+}
+
+/* Stats responsive móvil */
+[data-admin="true"] .stats-responsive {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0.75rem !important;
+}
+
+/* Forms móvil: stack vertical */
+[data-admin="true"] .form-fields-responsive {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1rem !important;
+}
+
+/* Buttons móvil: full width */
+[data-admin="true"] .mobile-full-width {
+  width: 100% !important;
+}
+
+/* Tables móvil: convertir a cards */
+@media (max-width: 767px) {
+  [data-admin="true"] .table-responsive {
+    display: block !important;
+  }
+  
+  [data-admin="true"] .table-responsive thead {
+    display: none !important;
+  }
+  
+  [data-admin="true"] .table-responsive tr {
+    display: block !important;
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    border: 1px solid var(--admin-border-primary) !important;
+    border-radius: 0.5rem !important;
+    background: var(--admin-bg-card) !important;
+  }
+  
+  [data-admin="true"] .table-responsive td {
+    display: block !important;
+    padding: 0.5rem 0 !important;
+    border: none !important;
+  }
+}
+
+/* 📊 TABLET (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* En tablet: sidebar sigue siendo overlay */
+  [data-admin="true"] .lg\:flex.lg\:w-64 {
+    display: none !important;
+  }
+  
+  /* Header móvil sigue visible */
+  [data-admin="true"] .lg\:hidden {
+    display: flex !important;
+  }
+  
+  /* Stats: 3 columnas en tablet */
+  [data-admin="true"] .stats-responsive {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  /* Forms: 2 columnas en tablet */
+  [data-admin="true"] .form-fields-responsive {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 💻 DESKTOP (1024px+) */
+@media (min-width: 1024px) {
+  /* En desktop: sidebar fijo */
+  [data-admin="true"] .lg\:flex.lg\:w-64 {
+    display: flex !important;
+    width: var(--admin-sidebar-width) !important;
+    position: fixed !important;
+    height: 100vh !important;
+    left: 0 !important;
+    top: 0 !important;
+  }
+  
+  /* Header móvil: oculto en desktop */
+  [data-admin="true"] .lg\:hidden {
+    display: none !important;
+  }
+  
+  /* Main content: con padding-left para sidebar */
+  [data-admin="true"] .lg\:pl-64 {
+    padding-left: var(--admin-sidebar-width) !important;
+  }
+  
+  /* Stats: 4 columnas en desktop */
+  [data-admin="true"] .stats-responsive {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  /* Touch targets más pequeños en desktop */
+  [data-admin="true"] button,
+  [data-admin="true"] [role="button"] {
+    min-height: 40px !important;
+    min-width: auto !important;
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+/* 🎯 MOBILE SIDEBAR OVERLAY - CRÍTICO */
+[data-admin="true"] .mobile-sidebar-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  z-index: 9998 !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+[data-admin="true"] .mobile-sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  width: 280px !important;
+  max-width: 85vw !important;
+  background: var(--admin-bg-primary) !important;
+  z-index: 9999 !important;
+  transform: translateX(-100%) !important;
+  transition: transform 0.3s ease !important;
+  overflow-y: auto !important;
+}
+
+[data-admin="true"] .mobile-sidebar.open {
+  transform: translateX(0) !important;
+}
+
+/* 📱 MOBILE HEADER - SIEMPRE VISIBLE */
+[data-admin="true"] .mobile-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: var(--admin-header-height) !important;
+  background: var(--admin-bg-primary) !important;
+  border-bottom: 1px solid var(--admin-border-primary) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 1rem !important;
+}
+
+@media (min-width: 1024px) {
+  [data-admin="true"] .mobile-header {
+    display: none !important;
+  }
+}
+
+/* 🎯 ADMIN CONTENT SPACING */
+[data-admin="true"] .admin-content {
+  padding-top: calc(var(--admin-header-height) + 1rem) !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+@media (min-width: 1024px) {
+  [data-admin="true"] .admin-content {
+    padding-top: 1rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
+
+/* 🔧 UTILIDADES MOBILE-FIRST */
+[data-admin="true"] .mobile-only {
+  display: block !important;
+}
+
+[data-admin="true"] .desktop-only {
+  display: none !important;
+}
+
+@media (min-width: 1024px) {
+  [data-admin="true"] .mobile-only {
+    display: none !important;
+  }
+  
+  [data-admin="true"] .desktop-only {
+    display: block !important;
+  }
+}
+
+/* 📝 FORMS MOBILE-FIRST */
+[data-admin="true"] input,
+[data-admin="true"] textarea,
+[data-admin="true"] select {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  font-size: 16px !important; /* Previene zoom en iOS */
+  border-radius: 0.5rem !important;
+}
+
+/* 🎨 CARDS MOBILE-FIRST */
+[data-admin="true"] .card {
+  margin-bottom: 1rem !important;
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+}
+
+@media (min-width: 768px) {
+  [data-admin="true"] .card {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ⚡ PERFORMANCE OPTIMIZATIONS */
+[data-admin="true"] * {
+  box-sizing: border-box !important;
+}
+
+[data-admin="true"] .smooth-transition {
+  transition: all 0.2s ease !important;
+}
+
+/* 🎯 ACCESSIBILITY MOBILE */
+[data-admin="true"] *:focus-visible {
+  outline: 2px solid var(--admin-accent-blue) !important;
+  outline-offset: 2px !important;
+}

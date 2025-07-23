@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"components\\\\ClientOptimizations.tsx -> next/web-vitals\":{\"id\":\"components\\\\ClientOptimizations.tsx -> next/web-vitals\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_next_web-vitals_js.js\"]}}"

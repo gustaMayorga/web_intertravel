@@ -130,18 +130,10 @@ const FeaturedPackages = () => {
           <h2 className="text-4xl font-bold text-intertravel-navy mb-4">
             Paquetes Destacados
           </h2>
+          {/* Categories intro */}
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Descubrí las mejores ofertas y experiencias únicas seleccionadas especialmente para vos
           </p>
-          
-          {/* Source indicator */}
-          <div className="text-sm text-gray-500 mb-8">
-            {packages.length > 0 && packages[0]._source && (
-              <span className="bg-gray-200 px-3 py-1 rounded-full">
-                📡 {packages[0]._source === 'travel-compositor' ? 'Conectado con Travel Compositor' : 'Datos de demostración'}
-              </span>
-            )}
-          </div>
         </div>
 
         {/* Category Filters */}

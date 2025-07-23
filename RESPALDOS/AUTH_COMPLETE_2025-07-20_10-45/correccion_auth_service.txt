@@ -1,0 +1,43 @@
+// Buscar la función login en auth-service.ts y aplicar esta corrección:
+
+// DESPUÉS DE RECIBIR LA RESPUESTA DEL BACKEND:
+console.log('🔍 DEBUG: Respuesta completa del login:', response);
+console.log('🔍 DEBUG: response.data:', response.data);
+
+// EXTRAER USER Y TOKEN (probar ambas estructuras):
+let user, token;
+if (response.data.data) {
+  // Estructura: response.data.data.{user, token}
+  user = response.data.data.user;
+  token = response.data.data.token;
+  console.log('🔍 DEBUG: Usando estructura response.data.data');
+} else {
+  // Estructura: response.data.{user, token}
+  user = response.data.user;
+  token = response.data.token;
+  console.log('🔍 DEBUG: Usando estructura response.data');
+}
+
+console.log('🔍 DEBUG: Token extraído:', token ? 'EXISTE' : 'NO EXISTE');
+console.log('🔍 DEBUG: Usuario extraído:', user ? user.email : 'NO EXISTE');
+
+// GUARDAR TOKEN CON VERIFICACIÓN:
+if (token) {
+  localStorage.setItem('auth_token', token);
+  console.log('✅ Token guardado en localStorage');
+ECHO está desactivado.
+  // VERIFICACIÓN INMEDIATA:
+  const savedToken = localStorage.getItem('auth_token');
+  console.log('🔍 Verificación: Token en localStorage:', savedToken ? 'EXISTE' : 'NO EXISTE');
+} else {
+  console.error('❌ Token no encontrado en respuesta del servidor');
+  return { success: false, error: 'Token no recibido del servidor' };
+}
+
+// GUARDAR USUARIO:
+if (user) {
+  localStorage.setItem('user_data', JSON.stringify(user));
+  console.log('✅ Usuario guardado en localStorage');
+} else {
+  console.error('❌ Usuario no encontrado en respuesta del servidor');
+}

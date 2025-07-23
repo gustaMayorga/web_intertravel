@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:13-alpine
+    container_name: intertravel_db
+    environment:
+      POSTGRES_DB: intertravel_prod
+      POSTGRES_USER: intertravel_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - intertravel_network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: intertravel_backend
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: intertravel_prod
+      DB_USER: intertravel_user
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    volumes:
+      - ./backend/logs:/app/logs
+    networks:
+      - intertravel_network
+
+  # Admin Panel
+  admin-panel:
+    build:
+      context: ./admin-panel
+      dockerfile: Dockerfile
+    container_name: intertravel_admin
+    environment:
+      NODE_ENV: production
+      PORT: 3005
+      NEXT_PUBLIC_API_URL: http://backend:3002
+    ports:
+      - "3005:3005"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - intertravel_network
+
+  # Client App
+  client-app:
+    build:
+      context: ./client-app
+      dockerfile: Dockerfile
+    container_name: intertravel_client
+    environment:
+      NODE_ENV: production
+      PORT: 3009
+      NEXT_PUBLIC_API_URL: http://backend:3002
+    ports:
+      - "3009:3009"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - intertravel_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: intertravel_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/ssl/certs
+    depends_on:
+      - backend
+      - admin-panel
+      - client-app
+    restart: unless-stopped
+    networks:
+      - intertravel_network
+
+  # Redis (opcional para cache)
+  redis:
+    image: redis:alpine
+    container_name: intertravel_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - intertravel_network
+
+volumes:
+  postgres_data:
+
+networks:
+  intertravel_network:
+    driver: bridge

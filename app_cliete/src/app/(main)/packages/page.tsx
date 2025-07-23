@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, Star, Zap, CreditCard, Sparkles, Search, Filter, MapPin, Clock, ChevronDown } from "lucide-react";
@@ -58,8 +58,8 @@ export default function PackagesPage() {
   
   // Filtros
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   
   // Para los filtros dinámicos
   const [countries, setCountries] = useState<string[]>([]);
@@ -149,8 +149,8 @@ export default function PackagesPage() {
       
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
-      if (selectedCountry) params.append('country', selectedCountry);
-      if (selectedCategory) params.append('category', selectedCategory);
+      if (selectedCountry && selectedCountry !== 'all') params.append('country', selectedCountry);
+      if (selectedCategory && selectedCategory !== 'all') params.append('category', selectedCategory);
       params.append('limit', '20');
       params.append('page', '1');
       
@@ -183,8 +183,8 @@ export default function PackagesPage() {
 
   const handleClearFilters = () => {
     setSearchTerm('');
-    setSelectedCountry('');
-    setSelectedCategory('');
+    setSelectedCountry('all');
+    setSelectedCategory('all');
     loadInitialPackages();
   };
 
@@ -260,7 +260,7 @@ export default function PackagesPage() {
                   <SelectValue placeholder="Todos los países" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos los países</SelectItem>
+                  <SelectItem value="all">Todos los países</SelectItem>
                   {countries.map(country => (
                     <SelectItem key={country} value={country}>{country}</SelectItem>
                   ))}
@@ -275,7 +275,7 @@ export default function PackagesPage() {
                   <SelectValue placeholder="Todas las categorías" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas las categorías</SelectItem>
+                  <SelectItem value="all">Todas las categorías</SelectItem>
                   {categories.map(category => (
                     <SelectItem key={category} value={category}>{category}</SelectItem>
                   ))}
@@ -327,12 +327,13 @@ export default function PackagesPage() {
               )}
               
               <div className="relative w-full h-52">
-                <Image
+                <SafeImage
                   src={pkg.images.main}
                   alt={pkg.title}
                   fill
                   className="object-cover rounded-t-lg"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  fallbackSrc="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop&auto=format&q=80"
                 />
               </div>
               

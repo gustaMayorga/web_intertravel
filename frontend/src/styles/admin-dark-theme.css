@@ -1,24 +1,24 @@
 /**
- * 🎨 TEMA OSCURO ADMIN CORREGIDO - ALTO CONTRASTE
+ * 🎨 TEMA OSCURO ADMIN - SCOPED ONLY
  * ================================================
  * 
- * ✅ Forzar tema oscuro en TODAS las páginas admin
- * ✅ Alto contraste: Fondo oscuro + Texto blanco
- * ✅ Compatible con todas las secciones
+ * ✅ SOLO afecta páginas admin (data-admin="true")
+ * ✅ NO afecta landing page ni páginas públicas
+ * ✅ COMPATIBLE con responsive design
  */
 
-/* Variables CSS para el tema oscuro mejorado */
+/* Variables CSS para el tema oscuro */
 :root {
-  --admin-bg-primary: #0f172a;      /* Fondo principal muy oscuro */
-  --admin-bg-secondary: #1e293b;     /* Fondo secundario */
-  --admin-bg-tertiary: #334155;      /* Fondo terciario */
-  --admin-bg-card: #1e293b;          /* Fondo de cards */
-  --admin-bg-sidebar: #111827;       /* Sidebar aún más oscuro */
+  --admin-bg-primary: #0f172a;      
+  --admin-bg-secondary: #1e293b;     
+  --admin-bg-tertiary: #334155;      
+  --admin-bg-card: #1e293b;          
+  --admin-bg-sidebar: #111827;       
   
-  --admin-text-primary: #ffffff;     /* Texto principal BLANCO */
-  --admin-text-secondary: #e2e8f0;   /* Texto secundario */
-  --admin-text-muted: #cbd5e1;       /* Texto atenuado */
-  --admin-text-disabled: #94a3b8;    /* Texto deshabilitado */
+  --admin-text-primary: #ffffff;     
+  --admin-text-secondary: #e2e8f0;   
+  --admin-text-muted: #cbd5e1;       
+  --admin-text-disabled: #94a3b8;    
   
   --admin-border-primary: #374151;   
   --admin-border-secondary: #4b5563; 
@@ -30,289 +30,263 @@
   --admin-warning: #f59e0b;          
   --admin-error: #ef4444;            
   --admin-info: #8b5cf6;             
-  
-  --admin-hover-bg: #374151;         
-  --admin-focus-bg: #4b5563;         
-  --admin-selected-bg: #1f2937;      
 }
 
-/* FORZAR TEMA OSCURO GLOBALMENTE EN ADMIN */
-body:has([class*="admin"]),
-body:has([data-admin]),
-.admin-layout,
-.admin-layout *,
-[data-admin="true"],
-[data-admin="true"] *,
-div[class*="admin"] *,
-div[id*="admin"] * {
+/* 🎯 TEMA OSCURO SOLO PARA ADMIN - SCOPED */
+/* CRÍTICO: Todos los selectores empiezan con [data-admin="true"] */
+
+[data-admin="true"] {
+  background-color: var(--admin-bg-primary);
+  color: var(--admin-text-primary);
+}
+
+[data-admin="true"] .min-h-screen,
+[data-admin="true"] .bg-gray-50,
+[data-admin="true"] .bg-white {
   background-color: var(--admin-bg-primary) !important;
   color: var(--admin-text-primary) !important;
 }
 
-/* Específico para páginas admin */
-.min-h-screen.bg-gray-50,
-.bg-gray-50,
-.bg-white {
-  background-color: var(--admin-bg-primary) !important;
-}
-
-/* Cards y contenedores */
-.bg-white,
-[class*="card"],
-.card,
-.rounded-lg.shadow,
-.border.rounded-lg {
+[data-admin="true"] .bg-white,
+[data-admin="true"] [class*="card"],
+[data-admin="true"] .card,
+[data-admin="true"] .rounded-lg.shadow,
+[data-admin="true"] .border.rounded-lg {
   background-color: var(--admin-bg-card) !important;
   border-color: var(--admin-border-primary) !important;
   color: var(--admin-text-primary) !important;
 }
 
-/* Headers y títulos */
-h1, h2, h3, h4, h5, h6,
-.text-gray-900,
-.text-gray-800,
-.text-gray-700 {
+[data-admin="true"] h1, 
+[data-admin="true"] h2, 
+[data-admin="true"] h3, 
+[data-admin="true"] h4, 
+[data-admin="true"] h5, 
+[data-admin="true"] h6,
+[data-admin="true"] .text-gray-900,
+[data-admin="true"] .text-gray-800,
+[data-admin="true"] .text-gray-700 {
   color: var(--admin-text-primary) !important;
 }
 
-/* Textos secundarios */
-.text-gray-600,
-.text-gray-500 {
+[data-admin="true"] .text-gray-600,
+[data-admin="true"] .text-gray-500 {
   color: var(--admin-text-secondary) !important;
 }
 
-/* Inputs y formularios */
-input, textarea, select,
-.border.border-gray-300,
-.border-gray-300 {
+[data-admin="true"] input, 
+[data-admin="true"] textarea, 
+[data-admin="true"] select,
+[data-admin="true"] .border.border-gray-300,
+[data-admin="true"] .border-gray-300 {
   background-color: var(--admin-bg-tertiary) !important;
   border-color: var(--admin-border-primary) !important;
   color: var(--admin-text-primary) !important;
 }
 
-input:focus, textarea:focus, select:focus {
+[data-admin="true"] input:focus, 
+[data-admin="true"] textarea:focus, 
+[data-admin="true"] select:focus {
   border-color: var(--admin-border-focus) !important;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
 }
 
-/* Botones */
-.bg-blue-600 {
+[data-admin="true"] .bg-blue-600 {
   background-color: var(--admin-accent-blue) !important;
 }
 
-.bg-blue-600:hover {
+[data-admin="true"] .bg-blue-600:hover {
   background-color: var(--admin-accent-blue-hover) !important;
 }
 
-/* Tables */
-table,
-thead,
-tbody,
-tr,
-td,
-th {
+[data-admin="true"] table,
+[data-admin="true"] thead,
+[data-admin="true"] tbody,
+[data-admin="true"] tr,
+[data-admin="true"] td,
+[data-admin="true"] th {
   background-color: var(--admin-bg-card) !important;
   color: var(--admin-text-primary) !important;
   border-color: var(--admin-border-primary) !important;
 }
 
-.bg-gray-50 {
+[data-admin="true"] .bg-gray-50 {
   background-color: var(--admin-bg-secondary) !important;
 }
 
-/* Hover states */
-.hover\\:bg-gray-50:hover,
-.hover\\:bg-gray-100:hover {
+[data-admin="true"] .hover\\:bg-gray-50:hover,
+[data-admin="true"] .hover\\:bg-gray-100:hover {
   background-color: var(--admin-hover-bg) !important;
 }
 
-/* Badges y estados */
-.bg-green-100 {
+/* Badges solo en admin */
+[data-admin="true"] .bg-green-100 {
   background-color: rgba(16, 185, 129, 0.2) !important;
   color: #10b981 !important;
 }
 
-.bg-red-100 {
+[data-admin="true"] .bg-red-100 {
   background-color: rgba(239, 68, 68, 0.2) !important;
   color: #ef4444 !important;
 }
 
-.bg-yellow-100 {
+[data-admin="true"] .bg-yellow-100 {
   background-color: rgba(245, 158, 11, 0.2) !important;
   color: #f59e0b !important;
 }
 
-.bg-blue-100 {
+[data-admin="true"] .bg-blue-100 {
   background-color: rgba(59, 130, 246, 0.2) !important;
   color: #3b82f6 !important;
 }
 
-.bg-orange-100 {
+[data-admin="true"] .bg-orange-100 {
   background-color: rgba(251, 146, 60, 0.2) !important;
   color: #f97316 !important;
 }
 
-.bg-purple-100 {
+[data-admin="true"] .bg-purple-100 {
   background-color: rgba(139, 92, 246, 0.2) !important;
   color: #8b5cf6 !important;
 }
 
-.bg-indigo-100 {
+[data-admin="true"] .bg-indigo-100 {
   background-color: rgba(99, 102, 241, 0.2) !important;
   color: #6366f1 !important;
 }
 
-/* Sidebar específico */
-.lg\\:bg-white {
+[data-admin="true"] .lg\\:bg-white {
   background-color: var(--admin-bg-sidebar) !important;
 }
 
-/* Charts y gráficos - mantener legibilidad */
-.recharts-wrapper,
-.recharts-surface {
+[data-admin="true"] .recharts-wrapper,
+[data-admin="true"] .recharts-surface {
   background-color: transparent !important;
 }
 
-/* Placeholders */
-::placeholder {
+[data-admin="true"] ::placeholder {
   color: var(--admin-text-muted) !important;
 }
 
-/* Loading screens */
-.animate-pulse .bg-gray-200 {
+[data-admin="true"] .animate-pulse .bg-gray-200 {
   background-color: var(--admin-bg-tertiary) !important;
 }
 
-/* Específico para textos que deben mantenerse blancos */
-.text-white {
+[data-admin="true"] .text-white {
   color: #ffffff !important;
 }
 
-/* Fix para navegación */
-.border-gray-200 {
+[data-admin="true"] .border-gray-200 {
   border-color: var(--admin-border-primary) !important;
 }
 
-/* Asegurar que los iconos mantengan su color */
-svg {
+[data-admin="true"] svg {
   fill: currentColor !important;
 }
 
-/* Mobile menu */
-.lg\\:hidden .bg-white {
+[data-admin="true"] .lg\\:hidden .bg-white {
   background-color: var(--admin-bg-sidebar) !important;
 }
 
-/* Asegurar contraste en todos los elementos */
-* {
-  box-shadow: none !important;
+/* 📱 RESPONSIVE SUPPORT SCOPED TO ADMIN */
+[data-admin="true"] .touch-target {
+  min-height: 44px !important;
+  min-width: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-/* Scrollbars oscuros */
-::-webkit-scrollbar {
+@media (max-width: 1023px) {
+  [data-admin="true"] .lg\\:hidden {
+    display: block !important;
+  }
+  
+  [data-admin="true"] .hidden.lg\\:flex {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-admin="true"] .stats-responsive {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  [data-admin="true"] .form-responsive {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-admin="true"] .stats-responsive {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+[data-admin="true"] ::-webkit-scrollbar {
   width: 8px;
   background-color: var(--admin-bg-secondary);
 }
 
-::-webkit-scrollbar-thumb {
+[data-admin="true"] ::-webkit-scrollbar-thumb {
   background-color: var(--admin-border-primary);
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--admin-border-secondary);
-}
-
-/* Asegurar que los componentes de Recharts sean visibles */
-.recharts-cartesian-axis-line,
-.recharts-cartesian-axis-tick-line {
+[data-admin="true"] .recharts-cartesian-axis-line,
+[data-admin="true"] .recharts-cartesian-axis-tick-line {
   stroke: var(--admin-text-muted) !important;
 }
 
-.recharts-text {
+[data-admin="true"] .recharts-text {
   fill: var(--admin-text-secondary) !important;
 }
 
-.recharts-cartesian-grid-horizontal line,
-.recharts-cartesian-grid-vertical line {
-  stroke: var(--admin-border-primary) !important;
-}
-
-/* Fix para tooltips */
-.recharts-tooltip-wrapper {
-  background-color: var(--admin-bg-card) !important;
-  border: 1px solid var(--admin-border-primary) !important;
-  border-radius: 8px !important;
-  color: var(--admin-text-primary) !important;
-}
-
-/* Tabs específicos */
-[role="tablist"] {
-  background-color: var(--admin-bg-secondary) !important;
-}
-
-[role="tab"] {
-  color: var(--admin-text-secondary) !important;
-}
-
-[role="tab"][data-state="active"] {
-  background-color: var(--admin-bg-card) !important;
-  color: var(--admin-text-primary) !important;
-}
-
-/* Modals y overlays */
-.fixed.inset-0 {
+[data-admin="true"] .fixed.inset-0 {
   background-color: rgba(0, 0, 0, 0.8) !important;
 }
 
-/* Gradientes para las cards de paquetes */
-.bg-gradient-to-r {
-  background: linear-gradient(to right, var(--admin-accent-blue), var(--admin-info)) !important;
-}
-
-/* Fix para text-gray-400 específicos */
-.text-gray-400 {
+[data-admin="true"] .text-gray-400 {
   color: var(--admin-text-disabled) !important;
 }
 
-/* Fix para badges específicos que necesitan mantener su color */
-.text-green-600,
-.text-green-800 {
+[data-admin="true"] .text-green-600,
+[data-admin="true"] .text-green-800 {
   color: var(--admin-success) !important;
 }
 
-.text-red-600,
-.text-red-800 {
+[data-admin="true"] .text-red-600,
+[data-admin="true"] .text-red-800 {
   color: var(--admin-error) !important;
 }
 
-.text-yellow-600,
-.text-yellow-800 {
-  color: var(--admin-warning) !important;
-}
-
-.text-blue-600,
-.text-blue-800 {
+[data-admin="true"] .text-blue-600,
+[data-admin="true"] .text-blue-800 {
   color: var(--admin-accent-blue) !important;
 }
 
-.text-purple-600,
-.text-purple-800 {
-  color: var(--admin-info) !important;
+[data-admin="true"] .shadow,
+[data-admin="true"] .shadow-sm,
+[data-admin="true"] .shadow-md,
+[data-admin="true"] .shadow-lg {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
 }
 
-/* Fix para elementos específicos del admin */
-.divide-y > * + * {
+/* FIX: Sidebar menu items - contraste correcto */
+[data-admin="true"] nav a,
+[data-admin="true"] .group.flex.items-center {
+  color: var(--admin-text-secondary) !important;
+  background-color: transparent !important;
+}
+
+[data-admin="true"] nav a:hover,
+[data-admin="true"] .group.flex.items-center:hover {
+  color: var(--admin-text-primary) !important;
+  background-color: var(--admin-bg-secondary) !important;
+}
+
+/* FIX: Sidebar background */
+[data-admin="true"] .lg\:flex.lg\:w-64.lg\:flex-col.lg\:fixed.lg\:inset-y-0.lg\:border-r.lg\:border-gray-200.lg\:bg-white.lg\:shadow-sm {
+  background-color: var(--admin-bg-sidebar) !important;
   border-color: var(--admin-border-primary) !important;
-}
-
-/* Asegurar que el texto de los badges sea legible */
-.bg-green-100.text-green-800,
-.bg-red-100.text-red-800,
-.bg-yellow-100.text-yellow-800,
-.bg-blue-100.text-blue-800,
-.bg-purple-100.text-purple-800,
-.bg-orange-100.text-orange-800,
-.bg-indigo-100.text-indigo-800 {
-  font-weight: 600 !important;
 }

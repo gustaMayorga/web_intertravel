@@ -4,6 +4,7 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from '@/contexts/auth-context';
+import { NotificationProvider } from '@/contexts/notification-context';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -54,8 +55,10 @@ export default function RootLayout({
     <html lang="es">
       <body className={`${montserrat.variable} antialiased min-h-screen flex flex-col`}>
         <AuthProvider>
-          {children}
-          <Toaster />
+          <NotificationProvider>
+            {children}
+            <Toaster />
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

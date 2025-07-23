@@ -222,47 +222,13 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     console.error('❌ Error en login usuario:', error);
     
-    // Error de PostgreSQL no disponible - usar credenciales demo
+    // MODO PRODUCCION REAL - SIN DEMOS
     if (error.message.includes('connect') || error.code === 'ECONNREFUSED') {
-      console.log('⚠️ PostgreSQL no disponible, usando credenciales demo');
-      
-      // Credenciales demo
-      if (email === 'demo@intertravel.com' && password === 'demo123') {
-        const mockUser = {
-          id: 'demo_user_001',
-          firstName: 'Demo',
-          lastName: 'User',
-          email: 'demo@intertravel.com',
-          phone: '+54 9 261 555-0123',
-          role: 'user',
-          loyaltyLevel: 'Gold',
-          points: 2847,
-          joinDate: '2023-01-15'
-        };
-
-        const token = jwt.sign(
-          { 
-            userId: mockUser.id, 
-            email: mockUser.email, 
-            role: mockUser.role 
-          },
-          JWT_SECRET,
-          { expiresIn: '7d' }
-        );
-
-        return res.json({
-          success: true,
-          message: 'Login exitoso (modo demo)',
-          user: mockUser,
-          token: token,
-          _fallback: true
-        });
-      } else {
-        return res.status(401).json({
-          success: false,
-          error: 'Credenciales inválidas (usa demo@intertravel.com / demo123 en modo demo)'
-        });
-      }
+      console.log('❌ PostgreSQL no disponible - SISTEMA EN MODO PRODUCCION');
+      return res.status(500).json({
+        success: false,
+        error: 'Base de datos no disponible. Contacte al administrador.'
+      });
     }
 
     res.status(500).json({

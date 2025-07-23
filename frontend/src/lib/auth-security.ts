@@ -1,9 +1,11 @@
 /**
- * 🔐 SISTEMA DE VALIDACIÓN DE AUTENTICACIÓN - INTERTRAVEL
- * =======================================================
+ * 🔐 SISTEMA DE VALIDACIÓN DE AUTENTICACIÓN - INTERTRAVEL (CORREGIDO)
+ * ==================================================================
  * 
- * Sistema seguro para validar tokens y gestionar sesiones
- * de admin y agencias con protección contra vulnerabilidades
+ * ✅ Sistema unificado para validar tokens y gestionar sesiones
+ * ✅ Tokens consistentes con sistema principal  
+ * ✅ Métodos unificados para todos los tipos de usuario
+ * ✅ Protección contra vulnerabilidades
  */
 
 import { useEffect, useCallback } from 'react';
@@ -16,20 +18,108 @@ export interface AuthValidationConfig {
   dashboardPath: string;
 }
 
+// ===============================================
+// 🔧 CONFIGURACIONES UNIFICADAS (CORREGIDO)
+// ===============================================
 export const AUTH_CONFIGS = {
   admin: {
-    tokenKey: 'adminToken',
-    userKey: 'adminUser',
+    tokenKey: 'intertravel_admin_token',     // ✅ Unificado con sistema principal
+    userKey: 'intertravel_admin_user',       // ✅ Unificado con sistema principal
     loginPath: '/admin/login',
     dashboardPath: '/admin/dashboard'
   },
   agency: {
-    tokenKey: 'agencyToken',
-    userKey: 'agencyUser', 
+    tokenKey: 'intertravel_agency_token',    // ✅ Unificado con sistema principal
+    userKey: 'intertravel_agency_user',      // ✅ Unificado con sistema principal
     loginPath: '/agency/login',
     dashboardPath: '/agency/dashboard'
+  },
+  user: {
+    tokenKey: 'intertravel_token',           // ✅ Compatible con sistema principal
+    userKey: 'intertravel_user',             // ✅ Compatible con sistema principal
+    loginPath: '/auth/login',
+    dashboardPath: '/account/dashboard'
   }
 } as const;
+
+// ===============================================
+// 🔧 MÉTODOS UNIFICADOS (NUEVOS)
+// ===============================================
+
+/**
+ * Método setToken unificado para todos los tipos de usuario
+ */
+export const setUnifiedToken = (
+  token: string, 
+  userData: any, 
+  type: 'admin' | 'agency' | 'user'
+): void => {
+  const config = AUTH_CONFIGS[type];
+  
+  try {
+    // Guardar token
+    localStorage.setItem(config.tokenKey, token);
+    console.log(`✅ Token ${type} guardado exitosamente`);
+    
+    // Guardar usuario
+    localStorage.setItem(config.userKey, JSON.stringify(userData));
+    console.log(`✅ Usuario ${type} guardado exitosamente`);
+    
+    // Actualizar actividad
+    localStorage.setItem(`${type}_lastActivity`, Date.now().toString());
+    
+  } catch (error) {
+    console.error(`❌ Error guardando datos ${type}:`, error);
+    throw new Error(`No se pudo guardar los datos de ${type}`);
+  }
+};
+
+/**
+ * Método getToken unificado
+ */
+export const getUnifiedToken = (type: 'admin' | 'agency' | 'user'): string | null => {
+  const config = AUTH_CONFIGS[type];
+  return localStorage.getItem(config.tokenKey);
+};
+
+/**
+ * Método getUser unificado
+ */
+export const getUnifiedUser = (type: 'admin' | 'agency' | 'user'): any | null => {
+  const config = AUTH_CONFIGS[type];
+  const userData = localStorage.getItem(config.userKey);
+  
+  if (!userData) return null;
+  
+  try {
+    return JSON.parse(userData);
+  } catch (error) {
+    console.error(`❌ Error parsing user data ${type}:`, error);
+    return null;
+  }
+};
+
+/**
+ * Método clearAuth unificado
+ */
+export const clearUnifiedAuth = (type: 'admin' | 'agency' | 'user'): void => {
+  const config = AUTH_CONFIGS[type];
+  
+  try {
+    localStorage.removeItem(config.tokenKey);
+    localStorage.removeItem(config.userKey);
+    localStorage.removeItem(`${type}_lastActivity`);
+    localStorage.removeItem(`${type}_permissions`);
+    
+    console.log(`🧹 Datos de autenticación ${type} limpiados`);
+  } catch (error) {
+    console.error(`❌ Error limpiando datos de auth ${type}:`, error);
+  }
+};
+
+// ===============================================
+// 🔧 VALIDACIÓN MEJORADA
+// ===============================================
 
 /**
  * Valida un token JWT básico (verificación del lado cliente)
@@ -69,7 +159,7 @@ export const validateTokenFormat = (token: string): boolean => {
  */
 export const validateTokenWithServer = async (
   token: string, 
-  type: 'admin' | 'agency'
+  type: 'admin' | 'agency' | 'user'
 ): Promise<boolean> => {
   try {
     const response = await fetch(`/api/auth/validate-${type}`, {
@@ -94,30 +184,16 @@ export const validateTokenWithServer = async (
 };
 
 /**
- * Limpia todos los datos de autenticación
+ * Limpia todos los datos de autenticación (LEGACY - mantener compatibilidad)
  */
 export const clearAuthData = (type: 'admin' | 'agency'): void => {
-  const config = AUTH_CONFIGS[type];
-  
-  try {
-    localStorage.removeItem(config.tokenKey);
-    localStorage.removeItem(config.userKey);
-    localStorage.removeItem(`${type}_lastActivity`);
-    localStorage.removeItem(`${type}_permissions`);
-    
-    // Limpiar cookies también
-    document.cookie = `${config.tokenKey}=; max-age=0; path=/; secure; samesite=strict`;
-    
-    console.log(`🧹 Datos de autenticación ${type} limpiados`);
-  } catch (error) {
-    console.error('Error limpiando datos de auth:', error);
-  }
+  clearUnifiedAuth(type);
 };
 
 /**
- * Verifica si una sesión es válida y activa
+ * Verifica si una sesión es válida y activa (MEJORADO)
  */
-export const isSessionValid = (type: 'admin' | 'agency'): boolean => {
+export const isSessionValid = (type: 'admin' | 'agency' | 'user'): boolean => {
   const config = AUTH_CONFIGS[type];
   
   try {
@@ -129,7 +205,7 @@ export const isSessionValid = (type: 'admin' | 'agency'): boolean => {
     
     // Verificar formato del token
     if (!validateTokenFormat(token)) {
-      clearAuthData(type);
+      clearUnifiedAuth(type);
       return false;
     }
     
@@ -140,7 +216,7 @@ export const isSessionValid = (type: 'admin' | 'agency'): boolean => {
       
       if (lastActivityTime < twoHoursAgo) {
         console.warn(`🚨 Sesión ${type} expirada por inactividad`);
-        clearAuthData(type);
+        clearUnifiedAuth(type);
         return false;
       }
     }
@@ -151,15 +227,15 @@ export const isSessionValid = (type: 'admin' | 'agency'): boolean => {
     return true;
   } catch (error) {
     console.error('Error verificando sesión:', error);
-    clearAuthData(type);
+    clearUnifiedAuth(type);
     return false;
   }
 };
 
 /**
- * Hook para proteger rutas que requieren autenticación
+ * Hook para proteger rutas que requieren autenticación (MEJORADO)
  */
-export const useAuthProtection = (type: 'admin' | 'agency') => {
+export const useAuthProtection = (type: 'admin' | 'agency' | 'user') => {
   const router = useRouter();
   const config = AUTH_CONFIGS[type];
   
@@ -179,7 +255,7 @@ export const useAuthProtection = (type: 'admin' | 'agency') => {
       const serverValid = await validateTokenWithServer(token, type);
       if (!serverValid) {
         console.log(`🚨 Token ${type} rechazado por servidor`);
-        clearAuthData(type);
+        clearUnifiedAuth(type);
         router.replace(config.loginPath);
         return false;
       }
@@ -201,9 +277,9 @@ export const useAuthProtection = (type: 'admin' | 'agency') => {
 };
 
 /**
- * Hook para verificar autenticación en páginas de login
+ * Hook para verificar autenticación en páginas de login (MEJORADO)
  */
-export const useLoginRedirect = (type: 'admin' | 'agency') => {
+export const useLoginRedirect = (type: 'admin' | 'agency' | 'user') => {
   const router = useRouter();
   const config = AUTH_CONFIGS[type];
   
@@ -217,13 +293,13 @@ export const useLoginRedirect = (type: 'admin' | 'agency') => {
 };
 
 /**
- * Función para logout seguro
+ * Función para logout seguro (MEJORADO)
  */
-export const secureLogout = (type: 'admin' | 'agency'): void => {
+export const secureLogout = (type: 'admin' | 'agency' | 'user'): void => {
   const config = AUTH_CONFIGS[type];
   
   // Limpiar datos locales
-  clearAuthData(type);
+  clearUnifiedAuth(type);
   
   // Notificar al servidor (opcional)
   const token = localStorage.getItem(config.tokenKey);
@@ -244,9 +320,9 @@ export const secureLogout = (type: 'admin' | 'agency'): void => {
 };
 
 /**
- * Detectar intentos de manipulación del localStorage
+ * Detectar intentos de manipulación del localStorage (MEJORADO)
  */
-export const setupSecurityMonitoring = (type: 'admin' | 'agency'): void => {
+export const setupSecurityMonitoring = (type: 'admin' | 'agency' | 'user'): void => {
   const config = AUTH_CONFIGS[type];
   
   // Monitorear cambios en localStorage
@@ -255,7 +331,7 @@ export const setupSecurityMonitoring = (type: 'admin' | 'agency'): void => {
     // Detectar manipulación de tokens
     if (key === config.tokenKey && !validateTokenFormat(value)) {
       console.error('🚨 INTENTO DE MANIPULACIÓN DE TOKEN DETECTADO');
-      clearAuthData(type);
+      clearUnifiedAuth(type);
       window.location.href = config.loginPath;
       return;
     }
@@ -269,10 +345,40 @@ export const setupSecurityMonitoring = (type: 'admin' | 'agency'): void => {
       if (e.key === config.tokenKey && e.newValue) {
         if (!validateTokenFormat(e.newValue)) {
           console.error('🚨 TOKEN MODIFICADO EXTERNAMENTE');
-          clearAuthData(type);
+          clearUnifiedAuth(type);
           window.location.href = config.loginPath;
         }
       }
     });
   }
+};
+
+// ===============================================
+// 🔧 FUNCIÓN DE VERIFICACIÓN COMPLETA (NUEVA)
+// ===============================================
+
+/**
+ * Verifica el estado completo del sistema de autenticación
+ */
+export const verifyAuthSystemStatus = (): Record<string, any> => {
+  const status = {
+    user: {
+      token: getUnifiedToken('user'),
+      user: getUnifiedUser('user'),
+      valid: isSessionValid('user')
+    },
+    admin: {
+      token: getUnifiedToken('admin'),
+      user: getUnifiedUser('admin'),
+      valid: isSessionValid('admin')
+    },
+    agency: {
+      token: getUnifiedToken('agency'),
+      user: getUnifiedUser('agency'),
+      valid: isSessionValid('agency')
+    }
+  };
+  
+  console.log('🔍 Estado completo del sistema auth:', status);
+  return status;
 };

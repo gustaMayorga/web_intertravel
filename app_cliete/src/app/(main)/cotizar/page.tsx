@@ -96,6 +96,14 @@ export default function CotizarPage() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       console.log('Cotización enviada:', formData);
+      
+      // Crear mensaje para WhatsApp
+      const whatsappMessage = generateWhatsAppMessage();
+      
+      // Enviar a WhatsApp automáticamente
+      const whatsappUrl = `https://wa.me/5491134567890?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+      
       setSubmitted(true);
       
       // Limpiar localStorage
@@ -108,6 +116,34 @@ export default function CotizarPage() {
     }
   };
 
+  const generateWhatsAppMessage = () => {
+    const formatDate = (dateString: string) => {
+      if (!dateString) return 'A definir';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    };
+
+    return `🎯 *SOLICITUD DE COTIZACIÓN - INTERTRAVEL*
+
+📦 *Paquete:* ${packageData?.title || 'Paquete seleccionado'}
+📍 *Destino:* ${packageData?.destination || 'Destino'}
+👤 *Cliente:* ${formData.firstName} ${formData.lastName}
+📧 *Email:* ${formData.email}
+📱 *Teléfono:* ${formData.phone}
+👥 *Viajeros:* ${formData.adults} adultos${formData.children > 0 ? `, ${formData.children} niños` : ''}
+📅 *Fecha preferida:* ${formatDate(formData.departureDate)}
+💰 *Presupuesto:* ${formData.budget || 'Flexible'}
+🏨 *Tipo de habitación:* ${formData.roomType || 'A definir'}
+
+${formData.specialRequests ? `📝 *Solicitudes especiales:*\n${formData.specialRequests}\n\n` : ''}Por favor, envíenme una cotización personalizada para este viaje.
+
+¡Muchas gracias!`;
+  };
+
   if (submitted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
@@ -115,10 +151,10 @@ export default function CotizarPage() {
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
           <div className="space-y-2">
             <h1 className="text-3xl font-bold text-green-600">
-              ¡Cotización Enviada Exitosamente!
+              ¡Cotización Enviada a WhatsApp!
             </h1>
             <p className="text-muted-foreground text-lg">
-              Hemos recibido tu solicitud de cotización para {packageData?.title}
+              Tu solicitud para {packageData?.title} fue enviada automáticamente a nuestro WhatsApp corporativo
             </p>
           </div>
           
@@ -127,8 +163,9 @@ export default function CotizarPage() {
               <div className="space-y-3">
                 <h3 className="font-semibold">¿Qué sigue?</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li>• Nuestro equipo revisará tu solicitud en las próximas 2-4 horas</li>
-                  <li>• Te contactaremos vía email y teléfono con una cotización personalizada</li>
+                  <li>• Tu mensaje fue enviado a nuestro WhatsApp: +54 9 11 3456-7890</li>
+                  <li>• Nuestro equipo te responderá por WhatsApp en los próximos minutos</li>
+                  <li>• Recibirás una cotización personalizada con todos los detalles</li>
                   <li>• Podrás hacer ajustes al itinerario según tus preferencias</li>
                   <li>• Una vez aprobado, te ayudaremos con todo el proceso de reserva</li>
                 </ul>
@@ -136,13 +173,25 @@ export default function CotizarPage() {
             </CardContent>
           </Card>
 
-          <div className="flex space-x-4 justify-center">
-            <Button onClick={() => router.push('/dashboard')}>
-              Volver al Inicio
+          <div className="flex flex-col space-y-4 justify-center">
+            <Button 
+              onClick={() => {
+                const whatsappUrl = `https://wa.me/5491134567890?text=${encodeURIComponent('Hola! Acabo de enviar una solicitud de cotización y quiero confirmar que la recibieron.')}`;
+                window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              📱 Abrir WhatsApp Nuevamente
             </Button>
-            <Button variant="outline" onClick={() => router.push('/packages')}>
-              Ver Más Paquetes
-            </Button>
+            
+            <div className="flex space-x-4 justify-center">
+              <Button onClick={() => router.push('/dashboard')}>
+                Volver al Inicio
+              </Button>
+              <Button variant="outline" onClick={() => router.push('/packages')}>
+                Ver Más Paquetes
+              </Button>
+            </div>
           </div>
         </div>
       </div>

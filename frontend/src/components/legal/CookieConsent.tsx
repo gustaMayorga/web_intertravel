@@ -31,6 +31,20 @@ const CookieConsent: React.FC = () => {
       // Aplicar las preferencias guardadas
       applyCookiePreferences(savedPreferences);
     }
+
+    // Escuchar evento del footer para abrir configuración
+    const handleOpenCookieSettings = () => {
+      if (consent) {
+        setShowDetails(true);
+        setIsVisible(true);
+      }
+    };
+
+    window.addEventListener('openCookieSettings', handleOpenCookieSettings);
+    
+    return () => {
+      window.removeEventListener('openCookieSettings', handleOpenCookieSettings);
+    };
   }, []);
 
   const applyCookiePreferences = (prefs: CookiePreferences) => {

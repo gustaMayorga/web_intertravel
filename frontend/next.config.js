@@ -1,48 +1,88 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
   experimental: {
-    esmExternals: 'loose'
+    optimizeCss: true,
+    optimizePackageImports: ['@heroicons/react'],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error']
+    } : false
+  },
+  eslint: {
+    ignoreDuringBuilds: false, // ✅ Cambiado para detectar errores
+  },
+  typescript: {
+    ignoreBuildErrors: false, // ✅ Cambiado para detectar errores
   },
   images: {
-    domains: ['images.unsplash.com', 'via.placeholder.com'],
-    unoptimized: true
-  },
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api',
-    NEXT_PUBLIC_TRAVEL_COMPOSITOR_URL: process.env.NEXT_PUBLIC_TRAVEL_COMPOSITOR_URL || 'https://online.travelcompositor.com',
-    NEXT_PUBLIC_GOOGLE_MAPS_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY || 'placeholder-key',
-  },
-  webpack: (config, { isServer }) => {
-    // Three.js optimization
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
-        crypto: false,
-      };
-    }
-    
-    // Handle Three.js modules
-    config.module.rules.push({
-      test: /\.m?js$/,
-      resolve: {
-        fullySpecified: false,
-      },
-    });
-
-    return config;
-  },
-  async rewrites() {
-    return [
+    remotePatterns: [
+      // ✅ CONFIGURACIÓN COMPLETA DE IMÁGENES
       {
-        source: '/api/:path*',
-        destination: 'http://localhost:3002/api/:path*'
-      }
-    ];
-  }
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Placeholder services
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+        port: '',
+        pathname: '/**',
+      },
+      // Travel Compositor API
+      {
+        protocol: 'https',
+        hostname: 'newapi.vpttours.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'online.travelcompositor.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.travelcompositor.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Travel Compositor Storage
+      {
+        protocol: 'https',
+        hostname: 'tr2storage.blob.core.windows.net',
+        port: '',
+        pathname: '/**',
+      },
+      // Para desarrollo local
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3002',
+        pathname: '/uploads/**',
+      },
+    ],
+    // Configuración adicional para mejor rendimiento
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
 };
 
 module.exports = nextConfig;

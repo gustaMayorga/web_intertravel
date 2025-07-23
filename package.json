@@ -1,0 +1,31 @@
+{
+  "name": "intertravel-qa-testing",
+  "version": "1.0.0",
+  "description": "QA Testing Tools for InterTravel System",
+  "main": "qa-testing-completo-produccion.js",
+  "scripts": {
+    "test": "node qa-testing-completo-produccion.js",
+    "test-db": "node verificar-database-completo.js",
+    "health": "node test-sistema-completo.js",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install && cd ../app_cliete && npm install",
+    "start-all": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" \"cd app_cliete && npm run dev\"",
+    "setup": "npm install && npm run install-all"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^16.3.1",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "intertravel",
+    "testing",
+    "qa",
+    "verification"
+  ],
+  "author": "InterTravel QA Team",
+  "license": "ISC"
+}

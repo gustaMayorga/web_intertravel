@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow temporary/test pages
+Disallow: /test/
+Disallow: /*?test=*
+
+# Allow important directories
+Allow: /paquetes/
+Allow: /images/
+Allow: /css/
+Allow: /js/
+
+# Sitemap location
+Sitemap: https://intertravel.com.ar/sitemap.xml
+
+# Crawl-delay for politeness
+Crawl-delay: 1

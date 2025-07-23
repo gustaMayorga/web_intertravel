@@ -22,6 +22,7 @@ import {
   Heart,
   Gift
 } from 'lucide-react';
+import { getUserProfile, getUserBookings, isAuthenticated, getStoredUser, logoutUser } from '@/lib/api-config';
 
 interface User {
   id: string;
@@ -52,25 +53,89 @@ export default function AccountDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar autenticación
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('user');
-    
-    if (!token || !userData) {
-      router.push('/auth/login');
-      return;
-    }
+    const initializeDashboard = async () => {
+      // Verificar autenticación
+      if (!isAuthenticated()) {
+        router.push('/auth/login');
+        return;
+      }
 
-    try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-      
-      // Cargar datos de prueba
-      loadMockData();
-    } catch (error) {
-      console.error('Error parsing user data:', error);
-      router.push('/auth/login');
-    }
+      try {
+        // Intentar cargar perfil del backend
+        const profileResponse = await getUserProfile();
+        
+        if (profileResponse.success && profileResponse.data) {
+          setUser({
+            id: profileResponse.data.id.toString(),
+            firstName: profileResponse.data.firstName,
+            lastName: profileResponse.data.lastName,
+            email: profileResponse.data.email,
+            phone: profileResponse.data.phone || '',
+            loyaltyLevel: 'Gold', // Por defecto
+            points: 2847, // Por defecto
+            joinDate: profileResponse.data.memberSince
+          });
+        } else {
+          // Fallback a datos del localStorage
+          const storedUser = getStoredUser();
+          if (storedUser) {
+            setUser({
+              id: storedUser.id.toString(),
+              firstName: storedUser.firstName,
+              lastName: storedUser.lastName,
+              email: storedUser.email,
+              phone: storedUser.phone || '',
+              loyaltyLevel: 'Gold',
+              points: 2847,
+              joinDate: '2023-01-15'
+            });
+          }
+        }
+
+        // Intentar cargar reservas del backend
+        const bookingsResponse = await getUserBookings();
+        
+        if (bookingsResponse.success && bookingsResponse.data) {
+          // Convertir reservas del backend al formato del frontend
+          const convertedBookings = bookingsResponse.data.map((booking: any) => ({
+            id: booking.id,
+            packageTitle: `Paquete ${booking.packageId}`,
+            destination: 'Destino por definir', // Necesitaremos mejorar esto
+            departureDate: booking.travelDate || '2024-08-15',
+            returnDate: booking.travelDate || '2024-08-23',
+            status: booking.status === 'confirmed' ? 'confirmed' : 'pending',
+            amount: parseFloat(booking.totalAmount) || 0,
+            travelers: booking.travelers || 1
+          }));
+          setBookings(convertedBookings);
+        } else {
+          // Fallback a datos mock
+          loadMockData();
+        }
+
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        // Fallback a datos mock
+        const storedUser = getStoredUser();
+        if (storedUser) {
+          setUser({
+            id: storedUser.id.toString(),
+            firstName: storedUser.firstName,
+            lastName: storedUser.lastName,
+            email: storedUser.email,
+            phone: storedUser.phone || '',
+            loyaltyLevel: 'Gold',
+            points: 2847,
+            joinDate: '2023-01-15'
+          });
+        }
+        loadMockData();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeDashboard();
   }, [router]);
 
   const loadMockData = () => {
@@ -125,8 +190,7 @@ export default function AccountDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    logoutUser();
     router.push('/');
   };
 

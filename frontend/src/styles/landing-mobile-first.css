@@ -1,0 +1,509 @@
+/**
+ * 📱 LANDING MOBILE-FIRST GLOBAL - CORRECCIÓN DEFINITIVA
+ * ======================================================
+ * 
+ * ✅ MOBILE-FIRST approach para TODA la aplicación pública
+ * ✅ Componentes responsive desde 320px hasta 1920px
+ * ✅ Touch-friendly y optimizado para móviles
+ * ✅ Performance optimizado
+ */
+
+/* 🎯 MOBILE-FIRST VARIABLES GLOBALES */
+:root {
+  --mobile-touch-target: 44px;
+  --mobile-padding: 1rem;
+  --tablet-padding: 1.5rem;
+  --desktop-padding: 2rem;
+  --mobile-font-size: 16px; /* Previene zoom en iOS */
+}
+
+/* 📱 MOBILE-FIRST BASE (320px+) - DEFAULT */
+/* Todo está optimizado para móvil PRIMERO */
+
+/* Container móvil: 100% width siempre */
+.container,
+.max-w-7xl,
+.max-w-6xl,
+.max-w-5xl,
+.max-w-4xl,
+.max-w-3xl {
+  width: 100% !important;
+  max-width: 100vw !important;
+  padding-left: var(--mobile-padding) !important;
+  padding-right: var(--mobile-padding) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Header móvil: responsive completo */
+header {
+  width: 100% !important;
+  max-width: 100vw !important;
+  padding: 0 var(--mobile-padding) !important;
+}
+
+header .max-w-7xl {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Navigation móvil */
+nav {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* Buttons móvil: touch-friendly */
+button,
+.btn,
+.touch-target,
+a[role="button"] {
+  min-height: var(--mobile-touch-target) !important;
+  min-width: var(--mobile-touch-target) !important;
+  padding: 0.75rem 1rem !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Hero section móvil */
+.hero-section,
+[class*="hero"] {
+  width: 100% !important;
+  max-width: 100vw !important;
+  padding: var(--mobile-padding) !important;
+  overflow-x: hidden !important;
+}
+
+/* Text móvil: responsive typography */
+h1 {
+  font-size: 2rem !important; /* 32px */
+  line-height: 1.2 !important;
+  margin-bottom: 1rem !important;
+}
+
+h2 {
+  font-size: 1.75rem !important; /* 28px */
+  line-height: 1.3 !important;
+  margin-bottom: 0.75rem !important;
+}
+
+h3 {
+  font-size: 1.5rem !important; /* 24px */
+  line-height: 1.4 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+p {
+  font-size: var(--mobile-font-size) !important;
+  line-height: 1.6 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Grids móvil: 1 columna DEFAULT */
+.grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1rem !important;
+  width: 100% !important;
+}
+
+/* Cards móvil */
+.card,
+[class*="card"] {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+  padding: 1rem !important;
+  border-radius: 0.75rem !important;
+}
+
+/* Images móvil: responsive */
+img {
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: cover !important;
+}
+
+/* Forms móvil */
+input,
+textarea,
+select {
+  width: 100% !important;
+  padding: 0.75rem !important;
+  font-size: var(--mobile-font-size) !important;
+  border-radius: 0.5rem !important;
+  border: 1px solid #d1d5db !important;
+  touch-action: manipulation !important;
+}
+
+/* Search bars móvil */
+.search-container,
+[class*="search"] {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Package grid móvil */
+.packages-grid,
+.destinations-grid,
+[class*="packages"],
+[class*="destinations"] {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1rem !important;
+  padding: 0 !important;
+}
+
+/* Stats móvil */
+.stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0.75rem !important;
+}
+
+/* Flex layouts móvil: stack by default */
+.flex {
+  flex-direction: column !important;
+  gap: 1rem !important;
+}
+
+.flex.space-x-4 > *,
+.flex.space-x-6 > *,
+.flex.space-x-8 > * {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Modal móvil */
+.modal,
+[class*="modal"] {
+  width: 95vw !important;
+  max-width: 95vw !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  margin: 5vh auto !important;
+}
+
+/* 📱 SMALL MOBILE (320px - 479px) */
+@media (max-width: 479px) {
+  :root {
+    --mobile-padding: 0.75rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem !important; /* 28px */
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .modal {
+    width: 98vw !important;
+    margin: 2vh auto !important;
+  }
+}
+
+/* 📱 LARGE MOBILE (480px - 767px) */
+@media (min-width: 480px) {
+  .packages-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 📊 TABLET (768px - 1023px) */
+@media (min-width: 768px) {
+  :root {
+    --mobile-padding: var(--tablet-padding);
+  }
+  
+  h1 {
+    font-size: 2.5rem !important; /* 40px */
+  }
+  
+  h2 {
+    font-size: 2rem !important; /* 32px */
+  }
+  
+  /* Grids tablet: 2-3 columnas */
+  .packages-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .destinations-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  /* Flex tablet: horizontal cuando hay espacio */
+  .flex.tablet-row {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Containers tablet */
+  .container,
+  .max-w-7xl {
+    max-width: 768px !important;
+  }
+}
+
+/* 💻 DESKTOP (1024px - 1439px) */
+@media (min-width: 1024px) {
+  :root {
+    --mobile-padding: var(--desktop-padding);
+  }
+  
+  h1 {
+    font-size: 3rem !important; /* 48px */
+  }
+  
+  h2 {
+    font-size: 2.25rem !important; /* 36px */
+  }
+  
+  /* Grids desktop: 3-4 columnas */
+  .packages-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .destinations-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  /* Containers desktop */
+  .container,
+  .max-w-7xl {
+    max-width: 1200px !important;
+  }
+  
+  /* Touch targets desktop: más pequeños */
+  button,
+  .btn {
+    min-height: 40px !important;
+    padding: 0.5rem 1.5rem !important;
+  }
+  
+  /* Flex desktop: horizontal por defecto */
+  .flex {
+    flex-direction: row !important;
+    gap: 2rem !important;
+  }
+}
+
+/* 🖥️ LARGE DESKTOP (1440px+) */
+@media (min-width: 1440px) {
+  h1 {
+    font-size: 3.5rem !important; /* 56px */
+  }
+  
+  .packages-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .destinations-grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
+  
+  .container,
+  .max-w-7xl {
+    max-width: 1400px !important;
+  }
+}
+
+/* 🎯 NAVIGATION MOBILE-FIRST */
+/* Mobile menu: hidden by default */
+.mobile-menu {
+  display: none !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  z-index: 9999 !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.mobile-menu.open {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.mobile-menu a {
+  color: white !important;
+  font-size: 1.5rem !important;
+  padding: 1rem !important;
+  text-decoration: none !important;
+}
+
+/* Desktop navigation: visible */
+@media (min-width: 1024px) {
+  .mobile-menu {
+    display: none !important;
+  }
+  
+  .desktop-nav {
+    display: flex !important;
+  }
+}
+
+/* 🔧 UTILITIES MOBILE-FIRST */
+.mobile-only {
+  display: block !important;
+}
+
+.tablet-only,
+.desktop-only {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+  
+  .tablet-only {
+    display: block !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tablet-only {
+    display: none !important;
+  }
+  
+  .desktop-only {
+    display: block !important;
+  }
+}
+
+/* 📱 SCROLLING OPTIMIZATIONS */
+html {
+  scroll-behavior: smooth !important;
+  -webkit-text-size-adjust: 100% !important;
+}
+
+body {
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+/* 🎯 PREVENT HORIZONTAL SCROLL */
+* {
+  box-sizing: border-box !important;
+}
+
+html, body {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+/* 📝 FORM OPTIMIZATIONS */
+/* Prevent zoom on focus in iOS */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="search"],
+textarea,
+select {
+  font-size: var(--mobile-font-size) !important;
+  transform: translateZ(0) !important; /* Force hardware acceleration */
+}
+
+/* 🎨 ANIMATIONS MOBILE-FRIENDLY */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ⚡ PERFORMANCE OPTIMIZATIONS */
+.gpu-accelerated {
+  transform: translateZ(0) !important;
+  will-change: transform !important;
+}
+
+/* 🎯 ACCESSIBILITY MOBILE */
+*:focus-visible {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  button,
+  .btn {
+    border: 2px solid currentColor !important;
+  }
+}
+
+/* 📱 SAFE AREA INSETS (iPhone X+) */
+@supports (padding: max(0px)) {
+  .safe-area-padding {
+    padding-left: max(var(--mobile-padding), env(safe-area-inset-left)) !important;
+    padding-right: max(var(--mobile-padding), env(safe-area-inset-right)) !important;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* 🎯 LANDING SPECIFIC COMPONENTS */
+/* Hero responsive */
+.hero-title {
+  font-size: 2rem !important;
+  text-align: center !important;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 3rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 4rem !important;
+    text-align: left !important;
+  }
+}
+
+/* Package cards responsive */
+.package-card {
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+}
+
+@media (min-width: 768px) {
+  .package-card {
+    width: calc(50% - 0.5rem) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .package-card {
+    width: calc(33.333% - 0.667rem) !important;
+  }
+}
+
+/* Search mobile-first */
+.search-input {
+  width: 100% !important;
+  font-size: var(--mobile-font-size) !important;
+  padding: 1rem !important;
+  border-radius: 2rem !important;
+}

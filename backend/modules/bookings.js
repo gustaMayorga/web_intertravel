@@ -7,15 +7,21 @@ class BookingsManager {
     try {
       const {
         package_id,
+        package_title,
+        package_source = 'manual', // 'travel_compositor' | 'manual' | 'imported'
+        destination,
+        country,
         customer_name,
         customer_email,
         customer_phone,
         travelers_count = 1,
+        travel_date,
+        return_date,
+        duration_days,
         total_amount,
         currency = 'USD',
-        travel_date,
         special_requests,
-        source = 'web',
+        source = 'web', // 'web' | 'admin' | 'api' | 'import'
         metadata = {}
       } = bookingData;
 
@@ -24,22 +30,30 @@ class BookingsManager {
 
       const result = await query(`
         INSERT INTO bookings (
-          booking_reference, package_id, customer_name, customer_email,
-          customer_phone, travelers_count, total_amount, currency,
-          travel_date, special_requests, source, metadata
+          booking_reference, package_id, package_title, package_source,
+          destination, country, customer_name, customer_email,
+          customer_phone, travelers_count, travel_date, return_date,
+          duration_days, total_amount, currency, special_requests, 
+          source, metadata
         ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
         ) RETURNING *
       `, [
         booking_reference,
         package_id,
+        package_title,
+        package_source,
+        destination,
+        country,
         customer_name,
         customer_email,
         customer_phone,
         travelers_count,
+        travel_date,
+        return_date,
+        duration_days,
         total_amount,
         currency,
-        travel_date,
         special_requests,
         source,
         JSON.stringify(metadata)

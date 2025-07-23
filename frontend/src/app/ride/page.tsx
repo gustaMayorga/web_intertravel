@@ -36,19 +36,19 @@ export default function RidePage() {
   const carouselImages = [
     {
       id: 1,
-      url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&h=600&fit=crop&auto=format&q=80',
-      title: 'Viajes de Egresados Únicos',
-      description: 'Experiencias inolvidables para celebrar tu graduación'
+      url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200&h=600&fit=crop&auto=format&q=80',
+      title: 'Viajes para Quinceañeras',
+      description: 'Experiencias inolvidables para celebrar tus 15 años'
     },
     {
       id: 2,
-      url: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?w=1200&h=600&fit=crop&auto=format&q=80',
+      url: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1200&h=600&fit=crop&auto=format&q=80',
       title: 'Destinos Increíbles',
-      description: 'Los mejores lugares para tu viaje de egresados'
+      description: 'Los mejores lugares para tu celebración de 15 años'
     },
     {
       id: 3,
-      url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=600&fit=crop&auto=format&q=80',
+      url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&h=600&fit=crop&auto=format&q=80',
       title: 'Momentos Inolvidables',
       description: 'Crea recuerdos que durarán toda la vida'
     }
@@ -85,9 +85,9 @@ export default function RidePage() {
   // Servicios RIDE
   const rideServices = [
     {
-      icon: <GraduationCap className="w-8 h-8" />,
-      title: 'Especialistas en Egresados',
-      description: 'Más de 15 años organizando viajes únicos para graduados'
+      icon: <Heart className="w-8 h-8" />,
+      title: 'Especialistas en Quinceañeras',
+      description: 'Más de 15 años organizando viajes únicos para quinceañeras y familias'
     },
     {
       icon: <Shield className="w-8 h-8" />,
@@ -95,9 +95,9 @@ export default function RidePage() {
       description: 'Coordinadores 24/7 y seguros integrales incluidos'
     },
     {
-      icon: <Heart className="w-8 h-8" />,
+      icon: <Star className="w-8 h-8" />,
       title: 'Experiencias Únicas',
-      description: 'Actividades exclusivas diseñadas para egresados'
+      description: 'Actividades exclusivas diseñadas para quinceañeras y familias'
     },
     {
       icon: <Users className="w-8 h-8" />,
@@ -174,23 +174,23 @@ export default function RidePage() {
                   RIDE
                 </div>
                 <div className="text-xl md:text-2xl text-violet-200 font-semibold tracking-wider">
-                  VIAJES DE EGRESADOS
+                  QUINCEAÑERAS Y FAMILIAS
                 </div>
               </div>
               
               {/* Badge profesional */}
               <div className="inline-flex items-center space-x-3 bg-white/95 backdrop-blur-md px-6 py-3 rounded-full border border-violet-200/30 shadow-xl mb-8">
-                <GraduationCap className="w-5 h-5" style={{color: '#8b5cf6'}} />
-                <span className="text-gray-800 font-semibold text-base">Especialistas en Viajes de Egresados</span>
+                <Heart className="w-5 h-5" style={{color: '#8b5cf6'}} />
+                <span className="text-gray-800 font-semibold text-base">Especialistas en Quinceañeras y Familias</span>
                 <CheckCircle className="w-5 h-5 text-green-600" />
               </div>
             </div>
             
             {/* Título principal */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8 text-white">
-              Tu Viaje de Egresados
+              Tu Celebración de 15 Años
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-purple-300">
-                Perfecto
+                Perfecta
               </span>
             </h1>
             
@@ -200,7 +200,7 @@ export default function RidePage() {
             </p>
             
             <p className="text-lg text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-              RIDE creando las mejores experiencias de viajes familias y 15 añeras. 
+              RIDE creando las mejores experiencias de viajes para quinceañeras y familias. 
               Destinos únicos, seguridad total y diversión garantizada.
             </p>
 
@@ -249,7 +249,7 @@ export default function RidePage() {
               ¿Por qué elegir RIDE?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Somos especialistas en crear el viaje perfecto! Soporte postventa excepcional!
+              Somos especialistas en crear el viaje perfecto para quinceañeras y familias! Soporte postventa excepcional!
             </p>
           </div>
 
@@ -282,7 +282,7 @@ export default function RidePage() {
               Destinos RIDE Más Elegidos
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Los mejores destinos para tu viaje
+              Los mejores destinos para tu celebración de 15 años
             </p>
           </div>
 
@@ -351,7 +351,7 @@ export default function RidePage() {
                 ¿Buscas el Mejor Viaje para tus 15 Años?
               </h2>
               <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-                Ofrecemos paquetes especiales para 15 añeras, con coordinación completa, 
+                Ofrecemos paquetes especiales para quinceañeras y familias, con coordinación completa, 
                 seguridad garantizada y precios preferenciales para grupos grandes.
               </p>
               
@@ -381,7 +381,7 @@ export default function RidePage() {
                   className="bg-gradient-to-r from-violet-600 to-purple-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-violet-700 hover:to-purple-800 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
                   <Phone className="w-5 h-5" />
-                  Consultar para Colegio
+                  Consultar para Quinceañeras
                 </a>
                 <a
                   href="mailto:ride@intertravel.com.ar"
@@ -395,8 +395,8 @@ export default function RidePage() {
 
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop&auto=format"
-                alt="Grupo de Egresados"
+                src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&h=400&fit=crop&auto=format"
+                alt="Grupo de Quinceañeras"
                 className="rounded-2xl shadow-2xl"
               />
               <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-lg border border-gray-100">

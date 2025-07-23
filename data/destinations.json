@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "name": "Buenos Aires",
+    "country": "Argentina",
+    "coordinates": {
+      "lat": -34.6037,
+      "lng": -58.3816
+    },
+    "description": "Capital cosmopolita de Argentina, famosa por su arquitectura europea, tango y gastronomía.",
+    "isActive": true,
+    "packageCount": 15,
+    "created_at": "2025-07-02T21:00:00.000Z",
+    "created_by": "system"
+  },
+  {
+    "id": 2,
+    "name": "Mendoza",
+    "country": "Argentina",
+    "coordinates": {
+      "lat": -32.8895,
+      "lng": -68.8458
+    },
+    "description": "Capital mundial del vino, rodeada de montañas y viñedos.",
+    "isActive": true,
+    "packageCount": 12,
+    "created_at": "2025-07-02T21:00:00.000Z",
+    "created_by": "system"
+  },
+  {
+    "id": 3,
+    "name": "Cusco",
+    "country": "Perú",
+    "coordinates": {
+      "lat": -13.5319,
+      "lng": -71.9675
+    },
+    "description": "Antigua capital del Imperio Inca, puerta de entrada a Machu Picchu.",
+    "isActive": true,
+    "packageCount": 18,
+    "created_at": "2025-07-02T21:00:00.000Z",
+    "created_by": "system"
+  },
+  {
+    "id": 4,
+    "name": "París",
+    "country": "Francia",
+    "coordinates": {
+      "lat": 48.8566,
+      "lng": 2.3522
+    },
+    "description": "Ciudad de la luz, famosa por sus museos, arquitectura y gastronomía.",
+    "isActive": true,
+    "packageCount": 8,
+    "created_at": "2025-07-02T21:00:00.000Z",
+    "created_by": "system"
+  },
+  {
+    "id": 7,
+    "name": "Roma",
+    "country": "Italia",
+    "coordinates": {
+      "lat": 41.9028,
+      "lng": 12.4964
+    },
+    "description": "Ciudad eterna, cuna de la civilización occidental.",
+    "isActive": true,
+    "packageCount": 14,
+    "created_at": "2025-07-02T21:00:00.000Z",
+    "created_by": "system"
+  }
+]

@@ -1,98 +1,15 @@
-import type { Metadata } from 'next';
+'use client';
+
 import './globals.css';
 import Analytics from '@/components/Analytics';
 import SchemaOrg from '@/components/SchemaOrg';
 import ClientOptimizations from '@/components/ClientOptimizations';
 import CookieConsent from '@/components/legal/CookieConsent';
-import CookieFloatingButton from '@/components/legal/CookieFloatingButton';
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://intertravel.com.ar'),
-  title: {
-    default: 'InterTravel Group | Tour Operador Premium Argentina | EVyT 15.566',
-    template: '%s | InterTravel Group'
-  },
-  description: '🌍 Tour Operador Mayorista con +15 años de experiencia. Paquetes premium a Perú, Europa, Asia y más. ✈️ Agencia EVyT 15.566 en Mendoza, Argentina.',
-  keywords: [
-    'tour operador argentina',
-    'viajes premium mendoza', 
-    'paquetes turisticos latinoamerica',
-    'agencia viajes EVyT',
-    'cusco machu picchu',
-    'europa tour operador',
-    'asia viajes premium',
-    'turismo responsable argentina',
-    'EVyT 15566',
-    'intertravel group',
-    'lujan de cuyo turismo'
-  ],
-  authors: [{ name: 'InterTravel Group', url: 'https://intertravel.com.ar' }],
-  creator: 'InterTravel Group',
-  publisher: 'InterTravel Group',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'es_AR',
-    url: 'https://intertravel.com.ar',
-    siteName: 'InterTravel Group',
-    title: 'InterTravel Group - Experiencias Premium de Viaje',
-    description: 'Descubre destinos únicos con el tour operador más confiable de Argentina. +5000 viajeros satisfechos.',
-    images: [{
-      url: 'https://intertravel.com.ar/og-image.jpg',
-      width: 1200,
-      height: 630,
-      alt: 'InterTravel Group - Tour Operador Premium'
-    }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    site: '@intertravelgroup',
-    creator: '@intertravelgroup',
-    title: 'InterTravel Group - Tour Operador Premium Argentina',
-    description: 'Experiencias de viaje únicas. EVyT 15.566. +15 años transformando sueños en aventuras.',
-    images: ['https://intertravel.com.ar/og-image.jpg'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon-16x16.svg',
-    apple: '/apple-touch-icon.svg',
-  },
-  manifest: '/site.webmanifest',
-  other: {
-    'google-site-verification': 'GOOGLE_VERIFICATION_CODE_REPLACE',
-    'msvalidate.01': 'BING_VERIFICATION_CODE_REPLACE',
-    'yandex-verification': 'YANDEX_VERIFICATION_CODE_REPLACE',
-    'geo.region': 'AR-M',
-    'geo.placename': 'Mendoza, Argentina',
-    'geo.position': '-33.0371735;-68.8894689',
-    'ICBM': '-33.0371735, -68.8894689',
-  },
-};
-
-export function generateViewport() {
-  return {
-    width: 'device-width',
-    initialScale: 1,
-    viewportFit: 'cover',
-    themeColor: '#16213e',
-    maximumScale: 5,
-  };
-}
+import WhatsAppFloating from '@/components/WhatsAppFloating';
+import WhapifyWebChat from '@/components/WhapifyWebChat';
+import GoogleAnalytics from '@/lib/google-analytics';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export default function RootLayout({
   children,
@@ -102,12 +19,20 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        {/* Favicon and Icons - Corregidos */}
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon-16x16.svg" sizes="16x16" type="image/svg+xml" />
-        <link rel="icon" href="/favicon-32x32.svg" sizes="32x32" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
-        <link rel="manifest" href="/site.webmanifest" />
+        {/* Meta Tags Básicos */}
+        <title>InterTravel Group | Tour Operador Premium Argentina | EVyT 15.566</title>
+        <meta name="description" content="🌍 Tour Operador Mayorista con 23K+ horas cumpliendo sueños. Paquetes premium a Perú, Europa, Asia y más. ✈️ Agencia EVyT 15.566 en Mendoza, Argentina." />
+        <meta name="keywords" content="tour operador argentina, viajes premium mendoza, paquetes turisticos, EVyT 15566, intertravel group" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#16213e" />
+        
+        {/* Favicons InterTravel - Desde FAVICON_INTER */}
+        <link rel="icon" href="/FAVICON_INTER/Favicon%2032px.png" sizes="32x32" type="image/png" />
+        <link rel="icon" href="/FAVICON_INTER/Favicon%2096px.png" sizes="96x96" type="image/png" />
+        <link rel="apple-touch-icon" href="/FAVICON_INTER/Favicon%20152px.png" sizes="152x152" />
+        <link rel="icon" href="/FAVICON_INTER/Favicon%20192px.png" sizes="192x192" type="image/png" />
+        <link rel="icon" href="/FAVICON_INTER/Favicon%20512px.png" sizes="512x512" type="image/png" />
+        <link rel="manifest" href="/manifest.json" />
         
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -141,6 +66,8 @@ export default function RootLayout({
         <link rel="prefetch" href="/nosotros" />
       </head>
       <body className="font-montserrat antialiased bg-white">
+        {/* 🔐 AuthProvider Wrapper - SOLUCIÓN AL ERROR CRÍTICO */}
+        <AuthProvider>
         {/* Schema.org Organization Data */}
         <SchemaOrg 
           type="organization" 
@@ -168,11 +95,30 @@ export default function RootLayout({
         {/* Main Content */}
         {children}
         
+        {/* WhatsApp Flotante */}
+        <WhatsAppFloating 
+          phone="5491134567890"
+          message="Hola! Estoy interesado en los paquetes de viaje de InterTravel. ¿Pueden ayudarme?"
+          position="bottom-right"
+          showAnimation={true}
+          adminConfigurable={true}
+        />
+        
+        {/* Whapify WebChat - Fase 3 */}
+        <WhapifyWebChat 
+          botId={process.env.NEXT_PUBLIC_WHAPIFY_BOT_ID || ''}
+          context="landing"
+          enabled={true}
+          showOnMobile={true}
+          showOnDesktop={true}
+          right="20px"
+          bottom="80px"
+        />
+        
         {/* Sistema de gestión de cookies */}
         <CookieConsent />
         
-        {/* Botón flotante de configuración de cookies */}
-        <CookieFloatingButton />
+
         
         {/* Optimizaciones del lado del cliente */}
         <ClientOptimizations />
@@ -228,6 +174,11 @@ export default function RootLayout({
             `
           }}
         />
+        
+        </AuthProvider>
+        
+        {/* Google Analytics 4 Integration */}
+        <GoogleAnalytics />
         
         {/* Analytics and Tracking - Configuración completa */}
         <Analytics 

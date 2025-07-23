@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuthProtection, secureLogout } from '@/lib/auth-security';
 import { 
   Building2, 
   DollarSign, 
@@ -23,7 +22,15 @@ import {
   Phone,
   Mail,
   BarChart3,
-  Package
+  Package,
+  Shield,
+  Award,
+  CheckCircle,
+  ArrowUpRight,
+  Download,
+  Eye,
+  Search,
+  Filter
 } from 'lucide-react';
 
 interface Agency {
@@ -58,9 +65,6 @@ interface Sale {
 export default function AgencyDashboard() {
   const router = useRouter();
   
-  // Proteger la ruta con autenticación
-  const { validateAndRedirect } = useAuthProtection('agency');
-  
   const [agency, setAgency] = useState<Agency | null>(null);
   const [user, setUser] = useState<AgencyUser | null>(null);
   const [sales, setSales] = useState<Sale[]>([]);
@@ -73,109 +77,122 @@ export default function AgencyDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar autenticación de agencia
-    const token = localStorage.getItem('agencyToken');
-    const agencyData = localStorage.getItem('agency');
-    const userData = localStorage.getItem('agencyUser');
+    console.log('🔍 Inicializando dashboard de agencias...');
     
-    if (!token || !agencyData || !userData) {
+    const token = localStorage.getItem('agencyToken') || localStorage.getItem('token');
+    const userData = localStorage.getItem('agencyUser') || localStorage.getItem('user');
+    
+    if (!token || !userData) {
+      console.log('❌ No hay token o datos de usuario');
       router.push('/agency/login');
       return;
     }
 
     try {
-      const parsedAgency = JSON.parse(agencyData);
       const parsedUser = JSON.parse(userData);
-      setAgency(parsedAgency);
-      setUser(parsedUser);
+      console.log('👤 Usuario encontrado:', parsedUser);
       
-      // Cargar datos de prueba
-      loadMockData();
+      if (parsedUser.role !== 'admin_agencia') {
+        console.log('❌ Usuario no es admin de agencia');
+        router.push('/agency/login');
+        return;
+      }
+
+      setUser(parsedUser);
+      loadMockData(parsedUser);
+      
     } catch (error) {
-      console.error('Error parsing agency data:', error);
+      console.error('❌ Error parsing user data:', error);
       router.push('/agency/login');
     }
   }, [router]);
 
-  const loadMockData = () => {
-    // Datos de ejemplo para la agencia
+  const loadMockData = (userData: any) => {
+    console.log('📊 Cargando datos mock para dashboard...');
+    
     const mockAgency: Agency = {
       id: '1',
-      name: 'Viajes Total',
-      code: 'VIAJES_TOTAL',
-      email: 'info@viajestotal.com.ar',
-      phone: '+54 261 4XX-XXXX',
-      address: 'Av. San Martín 1234, Local 5, Mendoza',
+      name: 'Viajes Total Premium',
+      code: 'VTP_001',
+      email: 'comercial@viajestotal.com.ar',
+      phone: '+54 261 425-8900',
+      address: 'Av. San Martín 1234, Local 5, Mendoza Capital',
       commissionRate: 12.50,
       status: 'active'
     };
 
-    const mockUser: AgencyUser = {
-      id: '1',
-      username: 'agencia_admin',
-      name: 'Administrador Viajes Total',
-      role: 'admin_agencia'
-    };
-
     const mockSales: Sale[] = [
       {
-        id: 'V-2024-001',
-        clientName: 'María González',
-        packageTitle: 'Perú Mágico - Cusco y Machu Picchu',
-        destination: 'Cusco, Perú',
-        amount: 1890,
-        commission: 236.25,
-        date: '2024-06-10',
+        id: 'VTP-2025-001',
+        clientName: 'María Elena González',
+        packageTitle: 'Europa Clásica - París, Roma, Londres',
+        destination: 'Europa Occidental',
+        amount: 2299,
+        commission: 287.38,
+        date: '2025-06-20',
         status: 'confirmed'
       },
       {
-        id: 'V-2024-002',
-        clientName: 'Carlos López',
-        packageTitle: 'Buenos Aires Tango',
-        destination: 'Buenos Aires, Argentina',
-        amount: 899,
-        commission: 112.38,
-        date: '2024-06-08',
+        id: 'VTP-2025-002',
+        clientName: 'Carlos Alberto López',
+        packageTitle: 'Circuito Asiático - Tokio, Bangkok, Singapur',
+        destination: 'Asia',
+        amount: 2899,
+        commission: 362.38,
+        date: '2025-06-18',
         status: 'confirmed'
       },
       {
-        id: 'V-2024-003',
-        clientName: 'Ana Rodríguez',
-        packageTitle: 'Cancún Paradise',
-        destination: 'Cancún, México',
-        amount: 1299,
-        commission: 162.38,
-        date: '2024-06-05',
+        id: 'VTP-2025-003',
+        clientName: 'Ana Patricia Rodríguez',
+        packageTitle: 'Safari Africano - Kenia y Tanzania',
+        destination: 'África',
+        amount: 3299,
+        commission: 412.38,
+        date: '2025-06-15',
         status: 'pending'
       },
       {
-        id: 'V-2024-004',
-        clientName: 'Roberto Silva',
-        packageTitle: 'España Histórica',
-        destination: 'Madrid, España',
-        amount: 1650,
-        commission: 206.25,
-        date: '2024-06-03',
+        id: 'VTP-2025-004',
+        clientName: 'Roberto Silva Montenegro',
+        packageTitle: 'Maravillas Americanas - Cusco, Cancún, NY',
+        destination: 'América',
+        amount: 2199,
+        commission: 274.88,
+        date: '2025-06-12',
+        status: 'confirmed'
+      },
+      {
+        id: 'VTP-2025-005',
+        clientName: 'Patricia Fernández',
+        packageTitle: 'Brasil Espectacular - Río, Iguazú, Salvador',
+        destination: 'Brasil',
+        amount: 1999,
+        commission: 249.88,
+        date: '2025-06-10',
         status: 'confirmed'
       }
     ];
 
     const mockStats = {
-      totalSales: 28450,
-      totalCommission: 3556.25,
-      monthlyClients: 18,
-      conversionRate: 23.4
+      totalSales: 42890,
+      totalCommission: 5361.25,
+      monthlyClients: 28,
+      conversionRate: 34.5
     };
 
     setAgency(mockAgency);
-    setUser(mockUser);
     setSales(mockSales);
     setStats(mockStats);
     setLoading(false);
+    
+    console.log('✅ Datos mock cargados exitosamente');
   };
 
   const handleLogout = () => {
-    secureLogout('agency');
+    console.log('🚪 Cerrando sesión de agencia...');
+    localStorage.clear();
+    router.push('/agency/login');
   };
 
   const getStatusColor = (status: string) => {
@@ -187,37 +204,74 @@ export default function AgencyDashboard() {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'Confirmado';
+      case 'pending': return 'Pendiente';
+      case 'cancelled': return 'Cancelado';
+      default: return 'Desconocido';
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen" style={{background: 'linear-gradient(135deg, #121c2e 0%, #1a2742 50%, #121c2e 100%)'}}>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400 mx-auto mb-4"></div>
+            <p className="text-xl">Cargando dashboard de agencias...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
-  if (!agency || !user) {
+  if (!user) {
     return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-lg border-b-2 border-gray-200">
+      <div className="bg-white shadow-lg border-b-2" style={{borderBottomColor: '#b38144'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <Link href="/" className="text-2xl font-bold text-blue-700">
-                InterTravel
+              <Link href="/" className="flex items-center space-x-3">
+                <img 
+                  src="/logo-intertravel.png" 
+                  alt="InterTravel Logo" 
+                  className="h-10 w-auto"
+                />
+                <div>
+                  <div className="text-xl font-bold" style={{color: '#121c2e'}}>InterTravel</div>
+                  <div className="text-sm" style={{color: '#b38144'}}>Portal de Agencias</div>
+                </div>
               </Link>
-              <span className="text-gray-700 font-bold">|</span>
-              <span className="text-gray-900 font-semibold">Portal Agencias</span>
             </div>
+            
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm" className="border-2 border-gray-400 text-gray-900 hover:bg-gray-100">
+              <div className="text-sm text-gray-600 text-right">
+                <div className="font-semibold">{user.name}</div>
+                <div className="capitalize" style={{color: '#b38144'}}>{user.role?.replace('_', ' ')}</div>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-2 text-gray-900 hover:bg-gray-100"
+                style={{borderColor: '#b38144'}}
+              >
                 <Settings className="h-4 w-4 mr-2" />
-                Configuración
+                Config
               </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="border-2 border-red-400 text-red-700 hover:bg-red-50">
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLogout} 
+                className="border-2 border-red-400 text-red-700 hover:bg-red-50"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Salir
               </Button>
@@ -227,50 +281,82 @@ export default function AgencyDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Welcome Section */}
+        <div className="rounded-2xl p-8 text-white mb-8" style={{background: 'linear-gradient(135deg, #121c2e 0%, #1a2742 50%, #121c2e 100%)'}}>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">
+                ¡Bienvenido, {agency?.name}! 🏢
+              </h1>
+              <p className="text-blue-100 text-lg">
+                Panel de control para gestionar tus ventas y comisiones
+              </p>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-4">
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 text-center border border-white/20">
+                <div className="text-2xl font-bold" style={{color: '#b38144'}}>{agency?.commissionRate}%</div>
+                <div className="text-sm text-blue-200">Tu Comisión</div>
+              </div>
+              
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 text-center border border-white/20">
+                <div className="text-2xl font-bold flex items-center">
+                  <CheckCircle className="w-6 h-6 mr-1 text-green-300" />
+                  Activa
+                </div>
+                <div className="text-sm text-blue-200">Estado Cuenta</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="mb-6 border-2" style={{borderColor: '#b38144'}}>
               <CardHeader className="text-center pb-4">
-                <div className="h-20 w-20 bg-gradient-to-br from-purple-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style={{background: 'linear-gradient(135deg, #121c2e 0%, #1a2742 100%)'}}>
                   <Building2 className="h-10 w-10 text-white" />
                 </div>
-                <CardTitle className="text-xl">{agency.name}</CardTitle>
-                <CardDescription>{agency.code}</CardDescription>
-                <Badge className="mt-2 bg-gradient-to-r from-purple-500 to-blue-500">
-                  <Star className="h-3 w-3 mr-1" />
+                <CardTitle className="text-xl" style={{color: '#121c2e'}}>{agency?.name}</CardTitle>
+                <CardDescription style={{color: '#b38144'}}>{agency?.code}</CardDescription>
+                <Badge className="mt-2 text-white" style={{background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)'}}>
+                  <Shield className="h-3 w-3 mr-1" />
                   Agencia Verificada
                 </Badge>
               </CardHeader>
+              
               <CardContent className="space-y-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-700">{agency.commissionRate}%</div>
-                  <div className="text-sm text-gray-900 font-semibold">Comisión</div>
+                <div className="text-center rounded-xl p-4" style={{backgroundColor: 'rgba(18, 28, 46, 0.05)'}}>
+                  <div className="text-3xl font-bold" style={{color: '#121c2e'}}>{agency?.commissionRate}%</div>
+                  <div className="text-sm font-semibold" style={{color: '#b38144'}}>Comisión Actual</div>
                 </div>
+                
                 <div className="space-y-3 text-sm">
-                  <div className="flex items-center text-gray-900">
-                    <Mail className="h-4 w-4 mr-2" />
-                    <span className="font-medium">{agency.email}</span>
+                  <div className="flex items-center text-gray-700">
+                    <Mail className="h-4 w-4 mr-2" style={{color: '#121c2e'}} />
+                    <span className="font-medium">{agency?.email}</span>
                   </div>
-                  <div className="flex items-center text-gray-900">
-                    <Phone className="h-4 w-4 mr-2" />
-                    <span className="font-medium">{agency.phone}</span>
+                  <div className="flex items-center text-gray-700">
+                    <Phone className="h-4 w-4 mr-2" style={{color: '#121c2e'}} />
+                    <span className="font-medium">{agency?.phone}</span>
                   </div>
-                  <div className="flex items-start text-gray-900">
-                    <MapPin className="h-4 w-4 mr-2 mt-0.5" />
-                    <span className="text-sm font-medium">{agency.address}</span>
+                  <div className="flex items-start text-gray-700">
+                    <MapPin className="h-4 w-4 mr-2 mt-0.5" style={{color: '#121c2e'}} />
+                    <span className="text-sm font-medium">{agency?.address}</span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start border-2 border-blue-300 text-blue-700 hover:bg-blue-50">
+                
+                <div className="space-y-2 pt-4 border-t" style={{borderColor: '#b38144'}}>
+                  <Button variant="outline" className="w-full justify-start border-2 hover:bg-blue-50" style={{borderColor: '#121c2e', color: '#121c2e'}}>
                     <Package className="h-4 w-4 mr-2" />
                     Catálogo
                   </Button>
-                  <Button variant="outline" className="w-full justify-start border-2 border-green-300 text-green-700 hover:bg-green-50">
+                  <Button variant="outline" className="w-full justify-start border-2 hover:bg-green-50" style={{borderColor: '#16a34a', color: '#16a34a'}}>
                     <FileText className="h-4 w-4 mr-2" />
                     Reportes
                   </Button>
-                  <Button variant="outline" className="w-full justify-start border-2 border-purple-300 text-purple-700 hover:bg-purple-50">
+                  <Button variant="outline" className="w-full justify-start border-2 hover:bg-yellow-50" style={{borderColor: '#b38144', color: '#b38144'}}>
                     <CreditCard className="h-4 w-4 mr-2" />
                     Facturación
                   </Button>
@@ -282,62 +368,77 @@ export default function AgencyDashboard() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             <div className="space-y-6">
-              {/* Welcome */}
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  ¡Bienvenido, {agency.name}! 🏢
-                </h1>
-                <p className="text-gray-600 mt-2">
-                  Panel de control para gestionar tus ventas y comisiones.
-                </p>
-              </div>
-
+              
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
+                <Card className="border-l-4" style={{borderLeftColor: '#16a34a'}}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600">Ventas Totales</p>
-                        <p className="text-2xl font-bold text-gray-900">${stats.totalSales.toLocaleString()}</p>
+                        <p className="text-2xl font-bold" style={{color: '#121c2e'}}>${stats.totalSales.toLocaleString()}</p>
+                        <p className="text-xs text-green-600 flex items-center mt-1">
+                          <ArrowUpRight className="w-3 h-3 mr-1" />
+                          +15.3% vs mes anterior
+                        </p>
                       </div>
-                      <DollarSign className="h-8 w-8 text-green-600" />
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(22, 163, 74, 0.1)'}}>
+                        <DollarSign className="h-6 w-6 text-green-600" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
                 
-                <Card>
+                <Card className="border-l-4" style={{borderLeftColor: '#b38144'}}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600">Comisiones</p>
-                        <p className="text-2xl font-bold text-gray-900">${stats.totalCommission.toLocaleString()}</p>
+                        <p className="text-2xl font-bold" style={{color: '#121c2e'}}>${stats.totalCommission.toLocaleString()}</p>
+                        <p className="text-xs flex items-center mt-1" style={{color: '#b38144'}}>
+                          <ArrowUpRight className="w-3 h-3 mr-1" />
+                          +8.2% vs mes anterior
+                        </p>
                       </div>
-                      <CreditCard className="h-8 w-8 text-purple-600" />
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(179, 129, 68, 0.1)'}}>
+                        <CreditCard className="h-6 w-6" style={{color: '#b38144'}} />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-l-4" style={{borderLeftColor: '#121c2e'}}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600">Clientes Mes</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.monthlyClients}</p>
+                        <p className="text-2xl font-bold" style={{color: '#121c2e'}}>{stats.monthlyClients}</p>
+                        <p className="text-xs flex items-center mt-1" style={{color: '#121c2e'}}>
+                          <ArrowUpRight className="w-3 h-3 mr-1" />
+                          +12 nuevos clientes
+                        </p>
                       </div>
-                      <Users className="h-8 w-8 text-blue-600" />
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: 'rgba(18, 28, 46, 0.1)'}}>
+                        <Users className="h-6 w-6" style={{color: '#121c2e'}} />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-l-4 border-l-orange-500">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-gray-600">Conversión</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.conversionRate}%</p>
+                        <p className="text-2xl font-bold" style={{color: '#121c2e'}}>{stats.conversionRate}%</p>
+                        <p className="text-xs text-orange-600 flex items-center mt-1">
+                          <TrendingUp className="w-3 h-3 mr-1" />
+                          Excelente performance
+                        </p>
                       </div>
-                      <TrendingUp className="h-8 w-8 text-orange-600" />
+                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                        <TrendingUp className="h-6 w-6 text-orange-600" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -345,70 +446,80 @@ export default function AgencyDashboard() {
 
               {/* Main Tabs */}
               <Tabs defaultValue="sales" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="sales">Ventas Recientes</TabsTrigger>
-                  <TabsTrigger value="commissions">Comisiones</TabsTrigger>
-                  <TabsTrigger value="clients">Clientes</TabsTrigger>
-                  <TabsTrigger value="reports">Reportes</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="sales" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                    Ventas Recientes
+                  </TabsTrigger>
+                  <TabsTrigger value="commissions" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                    Comisiones
+                  </TabsTrigger>
+                  <TabsTrigger value="clients" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                    Clientes
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="sales" className="space-y-4">
                   <Card>
-                    <CardHeader>
-                      <CardTitle>Ventas Recientes</CardTitle>
-                      <CardDescription>
-                        Últimas ventas realizadas por tu agencia
-                      </CardDescription>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <div>
+                        <CardTitle style={{color: '#121c2e'}}>Ventas Recientes</CardTitle>
+                        <CardDescription>
+                          Últimas ventas realizadas por tu agencia
+                        </CardDescription>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm" className="border-2" style={{borderColor: '#b38144', color: '#b38144'}}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Exportar
+                        </Button>
+                        <Button variant="outline" size="sm" className="border-2" style={{borderColor: '#121c2e', color: '#121c2e'}}>
+                          <Filter className="h-4 w-4 mr-2" />
+                          Filtrar
+                        </Button>
+                      </div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         {sales.map((sale) => (
-                          <div key={sale.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                          <div key={sale.id} className="border rounded-xl p-4 hover:bg-gray-50 transition-colors border-gray-200 hover:border-blue-300">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <h3 className="font-semibold text-gray-900">{sale.packageTitle}</h3>
-                                  <Badge className={getStatusColor(sale.status)}>
-                                    {sale.status === 'confirmed' ? 'Confirmado' : 
-                                     sale.status === 'pending' ? 'Pendiente' : 'Cancelado'}
+                                <div className="flex items-center space-x-3 mb-2">
+                                  <h3 className="font-semibold" style={{color: '#121c2e'}}>{sale.packageTitle}</h3>
+                                  <Badge className={`border ${getStatusColor(sale.status)}`}>
+                                    {getStatusText(sale.status)}
                                   </Badge>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
                                   <div className="flex items-center">
-                                    <Users className="h-4 w-4 mr-1" />
+                                    <Users className="h-4 w-4 mr-1" style={{color: '#121c2e'}} />
                                     {sale.clientName}
                                   </div>
                                   <div className="flex items-center">
-                                    <MapPin className="h-4 w-4 mr-1" />
+                                    <MapPin className="h-4 w-4 mr-1" style={{color: '#121c2e'}} />
                                     {sale.destination}
                                   </div>
                                   <div className="flex items-center">
-                                    <Calendar className="h-4 w-4 mr-1" />
+                                    <Calendar className="h-4 w-4 mr-1" style={{color: '#121c2e'}} />
                                     {new Date(sale.date).toLocaleDateString('es-ES')}
                                   </div>
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="text-lg font-bold text-gray-900">
+                                <div className="text-lg font-bold" style={{color: '#121c2e'}}>
                                   ${sale.amount.toLocaleString()}
                                 </div>
-                                <div className="text-sm text-green-600 font-medium">
+                                <div className="text-sm font-medium" style={{color: '#16a34a'}}>
                                   Comisión: ${sale.commission.toLocaleString()}
                                 </div>
-                                <div className="text-xs text-gray-600">
+                                <div className="text-xs text-gray-500">
                                   {sale.id}
                                 </div>
-                              </div>
-                            </div>
-                            <div className="mt-4 flex space-x-2">
-                              <Button size="sm" variant="outline">
-                                Ver Detalles
-                              </Button>
-                              {sale.status === 'confirmed' && (
-                                <Button size="sm">
-                                  Generar Factura
+                                <Button variant="ghost" size="sm" className="mt-2" style={{color: '#121c2e'}}>
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Ver detalles
                                 </Button>
-                              )}
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -420,33 +531,38 @@ export default function AgencyDashboard() {
                 <TabsContent value="commissions" className="space-y-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Resumen de Comisiones</CardTitle>
+                      <CardTitle style={{color: '#121c2e'}}>Resumen de Comisiones</CardTitle>
                       <CardDescription>
                         Detalle de comisiones por período
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="bg-green-50 p-4 rounded-lg">
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="rounded-xl p-4" style={{backgroundColor: 'rgba(22, 163, 74, 0.1)'}}>
                             <h3 className="font-semibold text-green-800">Este Mes</h3>
                             <p className="text-2xl font-bold text-green-900">${stats.totalCommission.toLocaleString()}</p>
                             <p className="text-sm text-green-600">+12.5% vs mes anterior</p>
                           </div>
-                          <div className="bg-blue-50 p-4 rounded-lg">
-                            <h3 className="font-semibold text-blue-800">Promedio Mensual</h3>
-                            <p className="text-2xl font-bold text-blue-900">${(stats.totalCommission * 0.85).toLocaleString()}</p>
-                            <p className="text-sm text-blue-600">Últimos 6 meses</p>
+                          <div className="rounded-xl p-4" style={{backgroundColor: 'rgba(18, 28, 46, 0.1)'}}>
+                            <h3 className="font-semibold" style={{color: '#121c2e'}}>Promedio Mensual</h3>
+                            <p className="text-2xl font-bold" style={{color: '#121c2e'}}>${(stats.totalCommission * 0.85).toLocaleString()}</p>
+                            <p className="text-sm" style={{color: '#121c2e'}}>Últimos 6 meses</p>
+                          </div>
+                          <div className="rounded-xl p-4" style={{backgroundColor: 'rgba(179, 129, 68, 0.1)'}}>
+                            <h3 className="font-semibold" style={{color: '#b38144'}}>Próximo Pago</h3>
+                            <p className="text-2xl font-bold" style={{color: '#b38144'}}>${(stats.totalCommission * 0.7).toLocaleString()}</p>
+                            <p className="text-sm" style={{color: '#b38144'}}>15 Julio 2025</p>
                           </div>
                         </div>
                         
-                        <div className="border rounded-lg p-4">
-                          <h4 className="font-medium mb-3">Comisiones por Venta</h4>
+                        <div className="border rounded-xl p-4">
+                          <h4 className="font-medium mb-3" style={{color: '#121c2e'}}>Comisiones por Venta</h4>
                           <div className="space-y-2">
                             {sales.filter(sale => sale.status === 'confirmed').map((sale) => (
                               <div key={sale.id} className="flex justify-between items-center py-2 border-b last:border-b-0">
                                 <div>
-                                  <p className="font-medium">{sale.clientName}</p>
+                                  <p className="font-medium" style={{color: '#121c2e'}}>{sale.clientName}</p>
                                   <p className="text-sm text-gray-600">{sale.packageTitle}</p>
                                 </div>
                                 <div className="text-right">
@@ -465,68 +581,38 @@ export default function AgencyDashboard() {
                 <TabsContent value="clients" className="space-y-4">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Base de Clientes</CardTitle>
+                      <CardTitle style={{color: '#121c2e'}}>Base de Clientes</CardTitle>
                       <CardDescription>
                         Gestión de clientes de tu agencia
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-medium">Clientes Activos</h4>
-                          <Button size="sm">
-                            <Users className="h-4 w-4 mr-2" />
-                            Agregar Cliente
-                          </Button>
-                        </div>
-                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {sales.map((sale, index) => (
-                            <div key={index} className="border rounded-lg p-4">
+                            <div key={index} className="border rounded-xl p-4 hover:bg-gray-50 transition-colors">
                               <div className="flex items-start justify-between">
-                                <div>
-                                  <h5 className="font-semibold">{sale.clientName}</h5>
+                                <div className="flex-1">
+                                  <h5 className="font-semibold" style={{color: '#121c2e'}}>{sale.clientName}</h5>
                                   <p className="text-sm text-gray-600">Último viaje: {sale.destination}</p>
                                   <p className="text-xs text-gray-500">{new Date(sale.date).toLocaleDateString('es-ES')}</p>
+                                  <div className="mt-2 flex items-center space-x-2">
+                                    <Badge variant="outline" className="text-xs">
+                                      Cliente Recurrente
+                                    </Badge>
+                                    <div className="flex items-center">
+                                      <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                                      <span className="text-xs text-gray-600 ml-1">4.9</span>
+                                    </div>
+                                  </div>
                                 </div>
-                                <Badge variant="outline">
-                                  Cliente
-                                </Badge>
+                                <Button variant="ghost" size="sm" style={{color: '#121c2e'}}>
+                                  <Eye className="w-4 h-4" />
+                                </Button>
                               </div>
                             </div>
                           ))}
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="reports" className="space-y-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Reportes y Analytics</CardTitle>
-                      <CardDescription>
-                        Análisis de rendimiento de tu agencia
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Button variant="outline" className="h-20 flex-col">
-                          <BarChart3 className="h-6 w-6 mb-2" />
-                          <span>Reporte de Ventas</span>
-                        </Button>
-                        <Button variant="outline" className="h-20 flex-col">
-                          <CreditCard className="h-6 w-6 mb-2" />
-                          <span>Estado de Comisiones</span>
-                        </Button>
-                        <Button variant="outline" className="h-20 flex-col">
-                          <Users className="h-6 w-6 mb-2" />
-                          <span>Análisis de Clientes</span>
-                        </Button>
-                        <Button variant="outline" className="h-20 flex-col">
-                          <TrendingUp className="h-6 w-6 mb-2" />
-                          <span>Tendencias de Mercado</span>
-                        </Button>
                       </div>
                     </CardContent>
                   </Card>

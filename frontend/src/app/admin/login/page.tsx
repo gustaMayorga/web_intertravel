@@ -1,208 +1,228 @@
 'use client';
 
-/**
- * 🔐 LOGIN ADMIN - INTERTRAVEL WEB-FINAL-UNIFICADA
- * ===============================================
- * 
- * ✅ Página de login del admin
- * ✅ Autenticación con backend/demo
- * ✅ Redirección automática
- */
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Shield, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
-import DemoCredentials from '@/components/ui/DemoCredentials';
-import { useLoginRedirect } from '@/lib/auth-security';
 
-export default function AdminLoginPage() {
-  const router = useRouter();
-  const { login, isAuthenticated, loading: authLoading, error: authError } = useAuth();
-  
-  // Usar hook de seguridad para redirigir si ya está autenticado
-  useLoginRedirect('admin');
-  
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
+// ===== LOGIN COMPONENT SIN BYPASS - AUTENTICACIÓN REAL =====
+
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  token?: string;
+  user?: {
+    username: string;
+    role: string;
+  };
+}
+
+export default function LoginFixed() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  // Redirect if already authenticated
+  // ===== VERIFICAR SI YA ESTÁ AUTENTICADO =====
   useEffect(() => {
-    if (isAuthenticated) {
-      router.replace('/admin/dashboard');
-    }
-  }, [isAuthenticated, router]);
+    checkExistingAuth();
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.username || !formData.password) {
-      setError('Por favor completa todos los campos');
-      return;
-    }
+  const checkExistingAuth = async () => {
+    const token = localStorage.getItem('admin_token');
+    if (!token) return;
 
     try {
-      setLoading(true);
-      setError(null);
+      // VERIFICAR TOKEN CON EL BACKEND - NO CONFIAR SOLO EN LOCALSTORAGE
+      const response = await fetch('http://localhost:3002/api/admin/stats', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-      const result = await login(formData);
-      
-      if (result.success) {
-        console.log('✅ Login exitoso, redirigiendo...');
-        router.replace('/admin/dashboard');
+      if (response.ok) {
+        console.log('✅ Token válido, redirigiendo a dashboard');
+        router.push('/admin/dashboard');
       } else {
-        setError(result.error || 'Error de autenticación');
+        console.log('❌ Token inválido, limpiando localStorage');
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
       }
-    } catch (err: any) {
-      console.error('Error en login:', err);
-      setError(err.message || 'Error interno del servidor');
+    } catch (error) {
+      console.log('❌ Error verificando token:', error);
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('🔐 Attempting login for username:', username);
+      
+      const response = await fetch('http://localhost:3002/api/admin/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username.trim(),
+          password: password
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
+      
+      if (data.success && data.token) {
+        console.log('✅ Login successful');
+        
+        // Guardar token y datos de usuario
+        localStorage.setItem('admin_token', data.token);
+        localStorage.setItem('admin_user', JSON.stringify(data.user));
+        
+        // VERIFICAR INMEDIATAMENTE QUE EL TOKEN FUNCIONA
+        const testResponse = await fetch('http://localhost:3002/api/admin/stats', {
+          headers: {
+            'Authorization': `Bearer ${data.token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (testResponse.ok) {
+          console.log('✅ Token verified, redirecting to dashboard');
+          router.push('/admin/dashboard');
+        } else {
+          throw new Error('Token no funciona después del login');
+        }
+        
+      } else {
+        console.log('❌ Login failed:', data.message);
+        setError(data.message || 'Credenciales inválidas');
+      }
+      
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      setError('Error de conexión. Verifique que el servidor esté funcionando.');
+      
+      // Limpiar cualquier dato de sesión en caso de error
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error when user starts typing
-    if (error) setError(null);
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    setUsername('');
+    setPassword('');
+    setError('');
+    console.log('🚪 Logout completed');
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Verificando sesión...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-full">
-              <Shield className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
             InterTravel Admin
           </h1>
-          <p className="text-gray-600">
-            Accede al panel de administración
-          </p>
+          <p className="text-gray-600">Panel de Administración WEB-FINAL-UNIFICADA</p>
+          <div className="w-20 h-1 bg-blue-500 mx-auto mt-4 rounded"></div>
         </div>
 
-        {/* Login Card */}
-        <Card className="shadow-lg border-0 backdrop-blur-sm bg-white/90">
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-2xl text-center text-gray-900">
-              Iniciar Sesión
-            </CardTitle>
-          </CardHeader>
-          
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Username Field */}
-              <div className="space-y-2">
-                <Label htmlFor="username" className="text-sm font-medium text-gray-700">
-                  Usuario
-                </Label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  placeholder="Ingresa tu usuario"
-                  className="h-11"
-                  disabled={loading}
-                  autoComplete="username"
-                />
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <div className="flex items-center">
+              <span className="text-red-500 mr-2">⚠️</span>
+              {error}
+            </div>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              Usuario
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="Ingrese su usuario"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder="Ingrese su contraseña"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !username || !password}
+            className={`w-full py-3 px-4 rounded-lg font-medium transition-all ${
+              loading || !username || !password
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
+            }`}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Verificando...
               </div>
+            ) : (
+              'Iniciar Sesión'
+            )}
+          </button>
+        </form>
 
-              {/* Password Field */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Contraseña
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Ingresa tu contraseña"
-                    className="h-11 pr-10"
-                    disabled={loading}
-                    autoComplete="current-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    disabled={loading}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {(error || authError) && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <div className="flex items-center">
-                    <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
-                    <span className="text-red-800 text-sm font-medium">
-                      {error || authError}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium"
-                disabled={loading || !formData.username || !formData.password}
+        {/* Debug Info (solo en desarrollo) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600 text-center mb-2">Credenciales de prueba:</p>
+            <div className="text-sm text-center space-y-1">
+              <p><strong>Usuario:</strong> admin</p>
+              <p><strong>Contraseña:</strong> admin123</p>
+            </div>
+            {localStorage.getItem('admin_token') && (
+              <button
+                onClick={handleLogout}
+                className="w-full mt-3 py-2 px-4 bg-red-100 text-red-700 rounded-lg text-sm hover:bg-red-200 transition-colors"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Iniciando sesión...
-                  </>
-                ) : (
-                  'Iniciar Sesión'
-                )}
-              </Button>
-            </form>
-
-            {/* Demo Credentials Info - Solo en desarrollo */}
-            <DemoCredentials type="admin" />
-          </CardContent>
-        </Card>
+                Limpiar Sesión Local
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Footer */}
-        <div className="text-center mt-6 text-sm text-gray-500">
-          <p>© 2024 InterTravel Group. Todos los derechos reservados.</p>
-          <p className="mt-1">WEB-FINAL-UNIFICADA v2.0</p>
+        <div className="text-center mt-8 text-sm text-gray-500">
+          <p>InterTravel Admin WEB-FINAL-UNIFICADA</p>
+          <p className="mt-1">🔒 Autenticación Segura - Sin Bypass</p>
         </div>
       </div>
     </div>

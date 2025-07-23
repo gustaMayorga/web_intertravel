@@ -1,34 +1,23 @@
-// ACTION REQUIRED:
-// 1. Create this file in src/firebase/firebaseConfig.js
-// 2. Go to your Firebase project console.
-// 3. In Project settings > General, find your web app.
-// 4. Under "SDK setup and configuration", choose "Config".
-// 5. Copy the firebaseConfig object and paste it below, replacing the placeholder.
+// ===============================================
+// FIREBASE CONFIG - MODO DESARROLLO/MOCK
+// ===============================================
+// Firebase está deshabilitado para development
+// La app funciona sin Firebase usando mock data
 
-// Example:
-// export const firebaseConfig = {
-//   apiKey: "AIzaSyYOUR_API_KEY_HERE",
-//   authDomain: "your-project-id.firebaseapp.com",
-//   projectId: "your-project-id",
-//   storageBucket: "your-project-id.appspot.com",
-//   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-//   appId: "YOUR_APP_ID",
-//   measurementId: "YOUR_MEASUREMENT_ID" // Optional
-// };
-
-// --- PASTE YOUR FIREBASE CONFIG OBJECT BELOW ---
+// Configuración mock para desarrollo (no funcional pero evita errores)
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  // measurementId: "YOUR_MEASUREMENT_ID" // Optional
+  apiKey: "mock-api-key-for-development",
+  authDomain: "intertravel-mock.firebaseapp.com",
+  projectId: "intertravel-mock",
+  storageBucket: "intertravel-mock.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:mock-app-id",
+  measurementId: "G-MOCK123456"
 };
 
-// --- END OF FIREBASE CONFIG ---
+// Flag para indicar que estamos en modo mock
+export const FIREBASE_ENABLED = false;
+export const MOCK_MODE = true;
 
-// Ensure all required fields are present, otherwise Firebase initialization might fail.
-// Note: Do not commit this file with your actual API keys to a public repository.
-// Consider using environment variables for production.
+console.log("🔧 Firebase en modo MOCK para desarrollo");
+console.log("📱 La app funciona sin Firebase - usando datos locales");

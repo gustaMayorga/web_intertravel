@@ -31,6 +31,7 @@ import {
   Info,
   AlertCircle
 } from 'lucide-react';
+import WhatsAppReserveButton from '@/components/WhatsAppReserveButton';
 
 interface Package {
   id: string;
@@ -88,8 +89,15 @@ export default function PackageDetailPage() {
   const loadPackage = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/packages/${params.id}`);
+      // Usar el backend correcto para obtener detalles
+      const API_BASE = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:3002/api' 
+        : '/api';
+      
+      const response = await fetch(`${API_BASE}/packages/${params.id}`);
       const data = await response.json();
+      
+      console.log('📦 Datos del paquete recibidos:', data);
 
       if (data.success) {
         setPkg(data.package);
@@ -513,6 +521,34 @@ export default function PackageDetailPage() {
                       Reservar Ahora
                     </Button>
 
+                    <WhatsAppReserveButton
+                      packageData={{
+                        id: pkg.id,
+                        title: pkg.title,
+                        destination: pkg.destination,
+                        price: pkg.price,
+                        duration: pkg.duration
+                      }}
+                      variant="secondary"
+                      size="lg"
+                      customMessage={`🎯 *CONSULTA PAQUETE - INTERTRAVEL*
+
+📦 *Paquete:* ${pkg.title}
+📍 *Destino:* ${pkg.destination}, ${pkg.country}
+💰 *Precio:* USD ${pkg.price.amount.toLocaleString()} por persona
+📅 *Duración:* ${pkg.duration.days} días / ${pkg.duration.nights} noches
+👥 *Viajeros:* ${bookingData.travelers} persona${bookingData.travelers > 1 ? 's' : ''}
+
+¡Hola! Me interesa mucho este paquete y me gustaría recibir información detallada sobre:
+• Disponibilidad para ${bookingData.departureDate || 'fechas flexibles'}
+• Itinerario completo
+• Opciones de pago
+• Promociones vigentes
+
+¡Espero su respuesta! 😊`}
+                      trackingSource="package_detail"
+                    />
+
                     <div className="text-center">
                       <Button variant="outline" className="w-full">
                         <Phone className="h-4 w-4 mr-2" />
@@ -637,10 +673,26 @@ export default function PackageDetailPage() {
               <Phone className="h-4 w-4 mr-2" />
               +54 261 XXX-XXXX
             </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600">
-              <Mail className="h-4 w-4 mr-2" />
-              Enviar Consulta
-            </Button>
+            <WhatsAppReserveButton
+              packageData={{
+                id: pkg.id,
+                title: pkg.title,
+                destination: pkg.destination,
+                price: pkg.price,
+                duration: pkg.duration
+              }}
+              variant="outline"
+              size="lg"
+              customMessage={`👤 *CONSULTA DESDE PÁGINA DE DETALLES*
+
+🎯 Me interesa el paquete: ${pkg.title}
+📍 Destino: ${pkg.destination}, ${pkg.country}
+
+¿Podrían brindarme información completa sobre este viaje? 🌍
+
+¡Gracias! 😊`}
+              trackingSource="package_detail_cta"
+            />
           </div>
         </div>
       </div>

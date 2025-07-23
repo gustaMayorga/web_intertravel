@@ -1,0 +1,277 @@
+// API Client for InterTravel Backend Integration
+import { backendConfig } from '@/lib/config';
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
+}
+
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  role: string;
+  joinDate?: string;
+  // ✅ Propiedades adicionales para compatibilidad
+  photoURL?: string;
+  displayName?: string;
+}
+
+export interface Booking {
+  id: string;
+  bookingReference: string;
+  packageId?: number;
+  packageTitle: string;
+  packageSource: string;
+  destination: string;
+  country: string;
+  travelDate: string;
+  returnDate: string;
+  durationDays: number;
+  travelersCount: number;
+  totalAmount: number;
+  paidAmount: number;
+  currency: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  paymentStatus: 'pending' | 'paid' | 'partial' | 'refunded' | 'failed';
+  specialRequests?: string;
+  services?: string[];
+  images?: string[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface UserStats {
+  totalBookings: number;
+  confirmedBookings: number;
+  pendingBookings: number;
+  completedBookings: number;
+  totalSpent: number;
+  confirmedSpent: number;
+  avgBookingValue: number;
+}
+
+class APIClient {
+  private baseURL: string;
+  private token: string | null = null;
+
+  constructor() {
+    this.baseURL = backendConfig.baseURL;
+    
+    // Cargar token del localStorage al inicializar - SINCRONIZAR CON AUTH-SERVICE
+    if (typeof window !== 'undefined') {
+      // Buscar token primero en auth-service, luego en el antiguo
+      this.token = localStorage.getItem('intertravel_token') || localStorage.getItem('auth_token');
+      
+      // Si se encontró en auth_token, migrarlo a intertravel_token
+      if (this.token && !localStorage.getItem('intertravel_token')) {
+        localStorage.setItem('intertravel_token', this.token);
+        localStorage.removeItem('auth_token');
+        console.log('🔄 Token migrado de auth_token a intertravel_token');
+      }
+    }
+  }
+
+  // Configurar token de autenticación - SINCRONIZAR CON AUTH-SERVICE
+  setToken(token: string | null) {
+    this.token = token;
+    if (typeof window !== 'undefined') {
+      if (token) {
+        // Guardar en ambas ubicaciones para compatibilidad
+        localStorage.setItem('intertravel_token', token);
+        localStorage.setItem('auth_token', token);
+        console.log('✅ Token guardado en localStorage (ambas claves)');
+      } else {
+        localStorage.removeItem('intertravel_token');
+        localStorage.removeItem('auth_token');
+        console.log('🧹 Token eliminado de localStorage');
+      }
+    }
+  }
+
+  // Obtener headers por defecto
+  private getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    return headers;
+  }
+
+  // Método genérico para hacer requests
+  private async request<T>(
+    endpoint: string, 
+    options: RequestInit = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const url = `${this.baseURL}/api/app${endpoint}`;
+      
+      console.log(`🌐 API Request: ${options.method || 'GET'} ${url}`);
+      
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...this.getHeaders(),
+          ...options.headers,
+        },
+        // @ts-ignore - timeout is not in standard RequestInit but supported by many environments
+        timeout: backendConfig.timeout,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error(`❌ API Error: ${response.status}`, data);
+        return {
+          success: false,
+          error: data.error || `HTTP ${response.status}`,
+        };
+      }
+
+      console.log(`✅ API Success: ${endpoint}`);
+      return {
+        success: true,
+        data: data,
+      };
+
+    } catch (error) {
+      console.error('❌ Network Error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error de conexión',
+      };
+    }
+  }
+
+  // ======================================
+  // AUTENTICACIÓN
+  // ======================================
+
+  async login(email: string, password: string): Promise<ApiResponse<{ user: User; token: string }>> {
+    const response = await this.request<{ user: User; token: string }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+
+    console.log('🔍 API Client - Full response:', JSON.stringify(response, null, 2));
+    
+    if (response.success && response.data && response.data.data) {
+      console.log('🔍 API Client - Extracting token from response.data.data');
+      console.log('🔍 API Client - Token found:', response.data.data.token);
+      this.setToken(response.data.data.token);
+    } else {
+      console.log('❌ API Client - No token found in response structure');
+    }
+
+    return response;
+  }
+
+  async register(
+    firstName: string,
+    lastName: string,
+    email: string,
+    phone: string,
+    password: string
+  ): Promise<ApiResponse<{ user: User; token: string }>> {
+    const response = await this.request<{ user: User; token: string }>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ firstName, lastName, email, phone, password }),
+    });
+
+    if (response.success && response.data && response.data.data) {
+      this.setToken(response.data.data.token);
+    }
+
+    return response;
+  }
+
+  logout() {
+    this.setToken(null);
+    if (typeof window !== 'undefined') {
+      // Limpiar todos los datos de usuario
+      localStorage.removeItem('user_data');
+      localStorage.removeItem('intertravel_user');
+      console.log('🧹 Logout: Todos los datos de usuario eliminados');
+    }
+  }
+
+  // ======================================
+  // USUARIO
+  // ======================================
+
+  async getUserProfile(): Promise<ApiResponse<{ user: User }>> {
+    return this.request<{ user: User }>('/user/profile');
+  }
+
+  async updateUserProfile(
+    firstName: string,
+    lastName: string,
+    phone?: string
+  ): Promise<ApiResponse<{ user: User }>> {
+    return this.request<{ user: User }>('/user/profile', {
+      method: 'PUT',
+      body: JSON.stringify({ firstName, lastName, phone }),
+    });
+  }
+
+  async getUserStats(): Promise<ApiResponse<{ stats: UserStats }>> {
+    return this.request<{ stats: UserStats }>('/user/stats');
+  }
+
+  // ======================================
+  // RESERVAS
+  // ======================================
+
+  async getUserBookings(): Promise<ApiResponse<{ bookings: Booking[]; total: number }>> {
+    return this.request<{ bookings: Booking[]; total: number }>('/user/bookings');
+  }
+
+  async getBookingDetails(bookingId: string): Promise<ApiResponse<{ booking: Booking }>> {
+    return this.request<{ booking: Booking }>(`/user/bookings/${bookingId}`);
+  }
+
+  // ======================================
+  // HEALTH CHECK
+  // ======================================
+
+  async healthCheck(): Promise<ApiResponse<any>> {
+    return this.request<any>('/health');
+  }
+
+  // ======================================
+  // UTILIDADES
+  // ======================================
+
+  isAuthenticated(): boolean {
+    return !!this.token;
+  }
+
+  getToken(): string | null {
+    return this.token;
+  }
+}
+
+// Crear instancia singleton
+const clientInstance = new APIClient();
+
+// Export explícito de la instancia
+export const apiClient = clientInstance;
+
+// Export por defecto también
+export default clientInstance;
+
+// Hook de conveniencia
+export const useAPIClient = () => clientInstance;
+
+// Export de la clase por si se necesita crear instancias adicionales
+export { APIClient };

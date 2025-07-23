@@ -1,47 +1,56 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, type Auth } from 'firebase/auth';
 import { getFirestore, doc, setDoc, serverTimestamp, getDoc, type Firestore } from 'firebase/firestore';
-import { firebaseConfig } from './firebaseConfig'; // User will create this file
+import { firebaseConfig, FIREBASE_ENABLED, MOCK_MODE } from './firebaseConfig';
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
-const googleProvider = new GoogleAuthProvider(); // This can be initialized regardless
+const googleProvider = new GoogleAuthProvider();
 
-if (
-  firebaseConfig &&
-  firebaseConfig.apiKey &&
-  firebaseConfig.apiKey !== "YOUR_API_KEY" && // Check against placeholder
-  firebaseConfig.projectId &&
-  firebaseConfig.projectId !== "YOUR_PROJECT_ID" // Check against placeholder
-) {
+// Solo inicializar Firebase si está habilitado y configurado correctamente
+if (FIREBASE_ENABLED && firebaseConfig && 
+    firebaseConfig.apiKey && 
+    firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+    firebaseConfig.apiKey !== "mock-api-key-for-development" &&
+    firebaseConfig.projectId && 
+    firebaseConfig.projectId !== "YOUR_PROJECT_ID" &&
+    firebaseConfig.projectId !== "intertravel-mock") {
+  
   try {
     app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
     auth = getAuth(app);
     db = getFirestore(app);
-    console.log("Firebase initialized successfully.");
+    console.log("✅ Firebase initialized successfully.");
   } catch (error) {
-    console.error("Firebase initialization error after checking config. This might be a network issue or an actual problem with valid-seeming credentials:", error);
-    // app, auth, db will remain null
+    console.error("❌ Firebase initialization error:", error);
+    app = null;
+    auth = null;
+    db = null;
   }
 } else {
-  console.error(
-    "******************************************************************************************\n" +
-    "ERROR: Firebase configuration in 'src/firebase/firebaseConfig.js' is missing, incomplete, \n" +
-    "or still uses placeholder values (e.g., YOUR_API_KEY).\n" +
-    "Please update it with your actual Firebase project credentials.\n" +
-    "Firebase features (like login, Firestore) will NOT be available until this is corrected.\n" +
-    "The application might run in a degraded mode or fail on pages requiring Firebase.\n" +
-    "******************************************************************************************"
-  );
+  if (MOCK_MODE) {
+    console.log("🔧 Firebase en modo MOCK - La app funciona sin Firebase");
+    console.log("📱 Usando datos locales para desarrollo");
+  } else {
+    console.warn(
+      "⚠️ Firebase no configurado correctamente.\n" +
+      "La app funcionará en modo local sin autenticación Firebase.\n" +
+      "Para habilitar Firebase, configura firebaseConfig.js con credenciales reales."
+    );
+  }
 }
 
-// Function to create or update user profile in Firestore
+// Mock function para desarrollo sin Firebase
 const createUserProfileDocument = async (userAuth: any) => {
   if (!userAuth) return;
 
   if (!db) {
-    console.warn("Firestore (db) is not initialized. Skipping createUserProfileDocument. This is likely due to missing or incorrect Firebase config.");
+    if (MOCK_MODE) {
+      console.log("🔧 Mock: createUserProfileDocument - Firebase deshabilitado");
+      return Promise.resolve(null);
+    }
+    console.warn("Firestore no disponible - función deshabilitada");
     return;
   }
 
@@ -63,7 +72,6 @@ const createUserProfileDocument = async (userAuth: any) => {
       console.error("Error creating user document in Firestore:", error);
     }
   } else {
-    // Optionally, update last login time or other fields
     try {
       await setDoc(userRef, { lastLoginAt: serverTimestamp() }, { merge: true });
     } catch (error) {
@@ -73,5 +81,24 @@ const createUserProfileDocument = async (userAuth: any) => {
   return userRef;
 };
 
+// Export con información del estado
+export { 
+  app, 
+  auth, 
+  db, 
+  googleProvider, 
+  createUserProfileDocument,
+  FIREBASE_ENABLED,
+  MOCK_MODE 
+};
 
-export { app, auth, db, googleProvider, createUserProfileDocument };
+// Log del estado para debugging
+if (typeof window !== 'undefined') {
+  console.log("🔍 Firebase Status:", {
+    enabled: FIREBASE_ENABLED,
+    mockMode: MOCK_MODE,
+    app: !!app,
+    auth: !!auth,
+    db: !!db
+  });
+}

@@ -16,6 +16,19 @@ import { auth as firebaseAuthChecker } from "@/firebase/firebase"; // For checki
 export default function ProfilePage() {
   const { currentUser, signOut, loading } = useAuth();
 
+  // ✅ Generar displayName si no existe
+  const getDisplayName = (user: typeof currentUser) => {
+    if (!user) return 'Usuario';
+    return user.displayName || user.fullName || `${user.firstName} ${user.lastName}` || 'Usuario';
+  };
+
+  // ✅ Generar initiales para avatar
+  const getInitials = (user: typeof currentUser) => {
+    if (!user) return 'U';
+    const name = getDisplayName(user);
+    return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  };
+
   const isAuthInitialized = !!firebaseAuthChecker;
 
 
@@ -60,13 +73,13 @@ export default function ProfilePage() {
         <Card className="shadow-lg">
           <CardHeader className="flex flex-col sm:flex-row items-center gap-4">
             <Avatar className="h-20 w-20 border-2 border-accent">
-                <AvatarImage src={currentUser.photoURL || undefined} alt={currentUser.displayName || "Avatar de usuario"} data-ai-hint="avatar person" />
+                <AvatarImage src={currentUser.photoURL || undefined} alt={getDisplayName(currentUser) || "Avatar de usuario"} data-ai-hint="avatar person" />
                 <AvatarFallback className="text-2xl">
-                    {currentUser.displayName ? currentUser.displayName.charAt(0).toUpperCase() : <UserCircle2 className="h-1/2 w-1/2"/>}
+                    {getInitials(currentUser) || <UserCircle2 className="h-1/2 w-1/2"/>}
                 </AvatarFallback>
             </Avatar>
             <div className="text-center sm:text-left">
-              <CardTitle className="text-xl">{currentUser.displayName || "Usuario"}</CardTitle>
+              <CardTitle className="text-xl">{getDisplayName(currentUser)}</CardTitle>
               <CardDescription>{currentUser.email}</CardDescription>
             </div>
           </CardHeader>

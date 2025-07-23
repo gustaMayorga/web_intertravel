@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Testing Console - InterTravel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-category {
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .test-category h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .test-category .icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .test-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-item:hover {
+            background: #e3f2fd;
+        }
+        
+        .test-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .test-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .test-item.completed {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .quick-link {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e1e5e9;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+            border-radius: 5px;
+        }
+        
+        .status-panel {
+            background: #f8f9fa;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .credentials {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .credentials h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .credentials p {
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .timer {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .timer h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .time-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1976d2;
+            font-family: monospace;
+        }
+        
+        .notes-section {
+            margin-top: 30px;
+        }
+        
+        .notes-section textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Testing Console - InterTravel</h1>
+            <p>Panel de validación completa del sistema</p>
+        </div>
+        
+        <div class="content">
+            <!-- Progress and Timer -->
+            <div class="timer">
+                <h3>⏱️ Tiempo de Testing</h3>
+                <div class="time-display" id="timer">00:00:00</div>
+                <button class="btn" onclick="startTimer()">Iniciar</button>
+                <button class="btn btn-warning" onclick="pauseTimer()">Pausar</button>
+                <button class="btn btn-danger" onclick="resetTimer()">Reset</button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="status-panel">
+                <h3>📊 Progreso General</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+                <p id="progressText">0% completado (0 de 32 tests)</p>
+            </div>
+
+            <!-- Quick Links -->
+            <h3>🚀 Enlaces Rápidos de Testing</h3>
+            <div class="quick-links">
+                <a href="http://localhost:3005" target="_blank" class="quick-link">
+                    🏠 Landing Principal
+                </a>
+                <a href="http://localhost:3005/paquetes" target="_blank" class="quick-link">
+                    📦 Catálogo Paquetes
+                </a>
+                <a href="http://localhost:3005/auth/login" target="_blank" class="quick-link">
+                    👤 Login Usuarios
+                </a>
+                <a href="http://localhost:3005/agency/login" target="_blank" class="quick-link">
+                    🏢 Portal Agencias
+                </a>
+                <a href="http://localhost:3005/admin/login" target="_blank" class="quick-link">
+                    👨‍💼 Panel Admin
+                </a>
+                <a href="http://localhost:3002/api/health" target="_blank" class="quick-link">
+                    🔧 API Health
+                </a>
+                <a href="http://localhost:3005/nosotros" target="_blank" class="quick-link">
+                    🏢 Nosotros
+                </a>
+                <a href="http://localhost:3005/mis-15" target="_blank" class="quick-link">
+                    🎓 Mis 15
+                </a>
+            </div>
+
+            <!-- Credentials -->
+            <div class="credentials">
+                <h4>🔐 Credenciales de Testing</h4>
+                <p><strong>👤 Usuarios:</strong> demo@intertravel.com / demo123</p>
+                <p><strong>🏢 Agencias:</strong> agencia_admin / agencia123</p>
+                <p><strong>👨‍💼 Admin:</strong> admin / admin123</p>
+            </div>
+
+            <!-- Test Categories -->
+            <div class="test-grid">
+                <!-- Infraestructura -->
+                <div class="test-category">
+                    <h3><span class="icon">🔧</span> Infraestructura</h3>
+                    <div class="test-item">
+                        <input type="checkbox" id="backend" onchange="updateProgress()">
+                        <label for="backend">Backend funcionando (Puerto 3002)</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="frontend" onchange="updateProgress()">
+                        <label for="frontend">Frontend funcionando (Puerto 3005)</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="travelcompositor" onchange="updateProgress()">
+                        <label for="travelcompositor">Travel Compositor conectado</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="postgresql" onchange="updateProgress()">
+                        <label for="postgresql">PostgreSQL operativo</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="cors" onchange="updateProgress()">
+                        <label for="cors">CORS configurado (sin errores)</label>
+                    </div>
+                </div>
+
+                <!-- Navegación -->
+                <div class="test-category">
+                    <h3><span class="icon">🌐</span> Navegación y UI</h3>
+                    <div class="test-item">
+                        <input type="checkbox" id="landing" onchange="updateProgress()">
+                        <label for="landing">Landing principal carga correctamente</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="header" onchange="updateProgress()">
+                        <label for="header">Header responsive funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="footer" onchange="updateProgress()">
+                        <label for="footer">Footer con información completa</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="mobile-nav" onchange="updateProgress()">
+                        <label for="mobile-nav">Navegación móvil (hamburger)</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="animations" onchange="updateProgress()">
+                        <label for="animations">Animaciones y efectos visuales</label>
+                    </div>
+                </div>
+
+                <!-- Catálogo -->
+                <div class="test-category">
+                    <h3><span class="icon">📦</span> Catálogo de Paquetes</h3>
+                    <div class="test-item">
+                        <input type="checkbox" id="packages-load" onchange="updateProgress()">
+                        <label for="packages-load">Paquetes cargando desde Travel Compositor</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="search" onchange="updateProgress()">
+                        <label for="search">Búsqueda por destino funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="filters" onchange="updateProgress()">
+                        <label for="filters">Filtros por país y categoría</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="package-detail" onchange="updateProgress()">
+                        <label for="package-detail">Detalle de paquete individual</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="images" onchange="updateProgress()">
+                        <label for="images">Imágenes cargando correctamente</label>
+                    </div>
+                </div>
+
+                <!-- Autenticación Usuarios -->
+                <div class="test-category">
+                    <h3><span class="icon">👤</span> Usuarios</h3>
+                    <div class="test-item">
+                        <input type="checkbox" id="user-login" onchange="updateProgress()">
+                        <label for="user-login">Login usuarios funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="user-register" onchange="updateProgress()">
+                        <label for="user-register">Registro usuarios funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="user-dashboard" onchange="updateProgress()">
+                        <label for="user-dashboard">Dashboard personal completo</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="user-validation" onchange="updateProgress()">
+                        <label for="user-validation">Validación de formularios</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="user-session" onchange="updateProgress()">
+                        <label for="user-session">Persistencia de sesión</label>
+                    </div>
+                </div>
+
+                <!-- Portal Agencias -->
+                <div class="test-category">
+                    <h3><span class="icon">🏢</span> Portal Agencias</h3>
+                    <div class="test-item">
+                        <input type="checkbox" id="agency-login" onchange="updateProgress()">
+                        <label for="agency-login">Login agencias funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="agency-dashboard" onchange="updateProgress()">
+                        <label for="agency-dashboard">Dashboard agencias completo</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="agency-commission" onchange="updateProgress()">
+                        <label for="agency-commission">Información de comisiones</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="agency-reports" onchange="updateProgress()">
+                        <label for="agency-reports">Panel de reportes</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="agency-logout" onchange="updateProgress()">
+                        <label for="agency-logout">Logout funcionando</label>
+                    </div>
+                </div>
+
+                <!-- Responsive -->
+                <div class="test-category">
+                    <h3><span class="icon">📱</span> Responsive Design</h3>
+                    <div class="test-item">
+                        <input type="checkbox" id="mobile-375" onchange="updateProgress()">
+                        <label for="mobile-375">iPhone (375px) funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="tablet-768" onchange="updateProgress()">
+                        <label for="tablet-768">iPad (768px) funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="desktop-1920" onchange="updateProgress()">
+                        <label for="desktop-1920">Desktop (1920px) funcionando</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="touch-targets" onchange="updateProgress()">
+                        <label for="touch-targets">Touch targets adecuados</label>
+                    </div>
+                    <div class="test-item">
+                        <input type="checkbox" id="mobile-forms" onchange="updateProgress()">
+                        <label for="mobile-forms">Formularios usables en móvil</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="notes-section">
+                <h3>📝 Notas y Observaciones</h3>
+                <textarea id="testingNotes" placeholder="Anote aquí cualquier issue, observación o comentario durante el testing..."></textarea>
+                <br>
+                <button class="btn" onclick="saveNotes()">💾 Guardar Notas</button>
+                <button class="btn btn-warning" onclick="exportReport()">📊 Exportar Reporte</button>
+                <button class="btn btn-danger" onclick="resetAll()">🔄 Reset Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startTime = null;
+        let timerInterval = null;
+        let isPaused = false;
+        let totalTests = 32;
+
+        function startTimer() {
+            if (!startTime) {
+                startTime = new Date();
+            }
+            if (!timerInterval && !isPaused) {
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+            isPaused = false;
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            isPaused = true;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            startTime = null;
+            isPaused = false;
+            document.getElementById('timer').textContent = '00:00:00';
+        }
+
+        function updateTimer() {
+            if (startTime) {
+                const now = new Date();
+                const diff = now - startTime;
+                const hours = Math.floor(diff / 3600000);
+                const minutes = Math.floor((diff % 3600000) / 60000);
+                const seconds = Math.floor((diff % 60000) / 1000);
+                
+                document.getElementById('timer').textContent = 
+                    String(hours).padStart(2, '0') + ':' +
+                    String(minutes).padStart(2, '0') + ':' +
+                    String(seconds).padStart(2, '0');
+            }
+        }
+
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percentage = Math.round((completed / totalTests) * 100);
+            
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = 
+                `${percentage}% completado (${completed} de ${totalTests} tests)`;
+            
+            // Update completed items styling
+            checkboxes.forEach(checkbox => {
+                const item = checkbox.closest('.test-item');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        function saveNotes() {
+            const notes = document.getElementById('testingNotes').value;
+            localStorage.setItem('intertravel-testing-notes', notes);
+            alert('📝 Notas guardadas localmente');
+        }
+
+        function exportReport() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const completed = Array.from(checkboxes).filter(cb => cb.checked);
+            const notes = document.getElementById('testingNotes').value;
+            
+            let report = `# 🧪 REPORTE DE TESTING - INTERTRAVEL\n`;
+            report += `**Fecha:** ${new Date().toLocaleString()}\n`;
+            report += `**Progreso:** ${completed.length}/${totalTests} tests completados\n\n`;
+            
+            report += `## ✅ Tests Completados:\n`;
+            completed.forEach(cb => {
+                const label = cb.nextElementSibling.textContent;
+                report += `- ✅ ${label}\n`;
+            });
+            
+            const pending = Array.from(checkboxes).filter(cb => !cb.checked);
+            if (pending.length > 0) {
+                report += `\n## ⏳ Tests Pendientes:\n`;
+                pending.forEach(cb => {
+                    const label = cb.nextElementSibling.textContent;
+                    report += `- ❌ ${label}\n`;
+                });
+            }
+            
+            if (notes) {
+                report += `\n## 📝 Notas y Observaciones:\n${notes}\n`;
+            }
+            
+            // Descargar como archivo
+            const blob = new Blob([report], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `intertravel-testing-report-${new Date().toISOString().split('T')[0]}.md`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function resetAll() {
+            if (confirm('¿Está seguro de que desea resetear todo el progreso?')) {
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+                document.getElementById('testingNotes').value = '';
+                updateProgress();
+                resetTimer();
+            }
+        }
+
+        // Load saved notes on page load
+        window.addEventListener('load', function() {
+            const savedNotes = localStorage.getItem('intertravel-testing-notes');
+            if (savedNotes) {
+                document.getElementById('testingNotes').value = savedNotes;
+            }
+            updateProgress();
+        });
+
+        // Auto-save notes
+        document.getElementById('testingNotes').addEventListener('input', function() {
+            localStorage.setItem('intertravel-testing-notes', this.value);
+        });
+    </script>
+</body>
+</html>

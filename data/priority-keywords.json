@@ -1,0 +1,75 @@
+[
+  {
+    "id": 1,
+    "keyword": "charter",
+    "priority": 1,
+    "category": "transport",
+    "active": true,
+    "description": "Vuelos charter prioritarios",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  },
+  {
+    "id": 2,
+    "keyword": "perú",
+    "priority": 2,
+    "category": "destination",
+    "active": true,
+    "description": "Destino Perú prioritario",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  },
+  {
+    "id": 3,
+    "keyword": "MSC",
+    "priority": 3,
+    "category": "cruise",
+    "active": true,
+    "description": "Cruceros MSC prioritarios",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  },
+  {
+    "id": 4,
+    "keyword": "intertravel",
+    "priority": 1,
+    "category": "agency",
+    "active": false,
+    "description": "Paquetes InterTravel",
+    "created_at": "2025-07-01T18:53:46.080Z",
+    "updated_at": "2025-07-02T22:48:52.222Z"
+  },
+  {
+    "id": 6,
+    "keyword": "premium",
+    "priority": 4,
+    "category": "category",
+    "active": true,
+    "description": "Paquetes premium",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  },
+  {
+    "id": 7,
+    "keyword": "luxury",
+    "priority": 5,
+    "category": "category",
+    "active": true,
+    "description": "Paquetes de lujo",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  },
+  {
+    "id": 8,
+    "keyword": "wine",
+    "priority": 6,
+    "category": "experience",
+    "active": true,
+    "description": "Tours de vino",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  },
+  {
+    "id": 10,
+    "keyword": "patagonia",
+    "priority": 4,
+    "category": "destination",
+    "active": true,
+    "description": "Destino Patagonia",
+    "created_at": "2025-07-01T18:53:46.080Z"
+  }
+]
